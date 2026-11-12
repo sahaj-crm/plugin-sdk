@@ -1,0 +1,5 @@
+{
+  "command": "python3",
+  "args": ["plugin.py"],
+  "cwd": "."
+}
