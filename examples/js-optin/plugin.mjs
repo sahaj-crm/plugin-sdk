@@ -1,4 +1,4 @@
-import { serve } from "../../js/index.js";
+import { serve } from "./sdk.js";
 
 serve({
   info: () => ({

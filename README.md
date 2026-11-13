@@ -109,6 +109,16 @@ serve(
 - `examples/js-optin`
 - `examples/python-optin`
 
+Install all three into a CRM plugins directory:
+
+```sh
+./install-examples.sh /path/to/sahaj-crm/plugins
+```
+
+The JS and Python examples vendor a copy of their SDK so they can be copied
+directly into the plugins directory. The Go example is compiled by the install
+script.
+
 ## Streaming and concurrency
 
 The current protocol is request/response and the host serializes calls. One

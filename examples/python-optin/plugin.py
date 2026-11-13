@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
-"""Example Python extension. Install the SDK with `pip install -e python` or
-run this from the repository so the relative import below finds it."""
+"""Example Python extension. The SDK is vendored in the plugin directory, so
+this can be copied directly into the host's plugins folder."""
 
-import pathlib
 import sys
 
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "python"))
-
-from sahaj_crm_plugin_sdk import serve  # noqa: E402
+from sahaj_crm_plugin_sdk import serve
 
 
 def info():
