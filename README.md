@@ -74,6 +74,103 @@ The full contract is in [spec/protocol.md](spec/protocol.md).
 - `mode: "required"` shows the required marker.
 - `options` supplies select/checkbox choices.
 
+## Using field values in `handle`
+
+For entity create/update events, `event.input` is the serialized operation
+input:
+
+```json
+{
+  "Record": {
+    "ID": 4,
+    "Name": "Introduction to Sahaj"
+  },
+  "Extras": {
+    "com.example.optin": {
+      "opt_in": "true",
+      "options": "one"
+    }
+  }
+}
+```
+
+`Extras` is namespaced by extension ID and then by the **simple field param**.
+Read only your own extension's entry.
+
+Types:
+
+- web forms submit strings:
+  - checkbox: `"true"` / `"false"`
+  - multi-value field: `["one", "two"]`
+- API clients may send JSON booleans, numbers, strings, or arrays.
+
+### Go
+
+```go
+type Input struct {
+    Record map[string]any            `json:"Record"`
+    Extras map[string]map[string]any `json:"Extras"`
+}
+
+func (Extension) Handle(_ context.Context, ev *extensionapi.Event) (*extensionapi.EventResponse, error) {
+    var in Input
+    if err := json.Unmarshal(ev.Input, &in); err != nil {
+        return nil, err
+    }
+
+    values := in.Extras["com.example.optin"]
+    optIn := values["opt_in"]
+
+    if ev.Phase == extensionapi.Before && !truthy(optIn) {
+        return &extensionapi.EventResponse{Error: "opt-in is required"}, nil
+    }
+    return &extensionapi.EventResponse{}, nil
+}
+
+func truthy(v any) bool {
+    switch v := v.(type) {
+    case bool:
+        return v
+    case string:
+        return v == "true"
+    default:
+        return false
+    }
+}
+```
+
+### JavaScript
+
+```js
+handle: (event) => {
+  const values = event.input?.Extras?.["com.example.optin"] ?? {};
+  if (event.phase === "before" && values.opt_in !== "true") {
+    return { error: "opt-in is required" };
+  }
+  return {};
+},
+```
+
+### Python
+
+```python
+def handle(event):
+    extras = event.get("input", {}).get("Extras", {})
+    values = extras.get("com.example.optin", {})
+    if event["phase"] == "before" and values.get("opt_in") != "true":
+        return {"error": "opt-in is required"}
+    return {}
+```
+
+### Phases
+
+- `before`: validate; return `error` to abort.
+- `after`: the operation committed. `event.output` contains the saved entity.
+- `failed`: the operation failed. `event.error` contains the reason.
+
+For archive/delete, `input` is just the entity ID and there is no `Extras`.
+Delete `output` is `{"ID": <id>}`.
+
 ## Languages
 
 The SDK is an authoring tool; the installed artifact is always a native

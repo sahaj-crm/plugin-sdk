@@ -28,7 +28,7 @@ func (Extension) Contribute(
 			Name:  "Enable the example feature",
 			Param: "opt_in",
 			Type:  extensionapi.FieldCheckbox,
-			Note:  "Stored under the extension's own data.",
+			Note:  "Note about this checkbox",
 		}, {
 			Name:  "Choose wisely",
 			Param: "options",
@@ -43,8 +43,8 @@ func (Extension) Contribute(
 }
 
 type Input struct {
-	Record map[string]any
-	Extras map[string]any
+	Record map[string]any            `json:"Record"`
+	Extras map[string]map[string]any `json:"Extras"`
 }
 
 func (Extension) Handle(
@@ -52,12 +52,24 @@ func (Extension) Handle(
 	ev *extensionapi.Event,
 ) (*extensionapi.EventResponse, error) {
 	log.Printf("example extension: %s %s", ev.Phase, ev.Name)
+
 	var input Input
-	err := json.Unmarshal(ev.Input, &input)
-	if err != nil {
+	if err := json.Unmarshal(ev.Input, &input); err != nil {
 		return nil, err
 	}
-	log.Println(input.Extras[name])
+
+	// Extras is namespaced by extension id. Read only your own fields.
+	values := input.Extras[name]
+	optIn := values["opt_in"]
+	choice := values["options"]
+
+	log.Printf("plugin fields: opt_in=%v options=%v", optIn, choice)
+
+	// Web forms submit strings ("true"/"false"); API clients may send booleans.
+	if ev.Phase == extensionapi.Before && optIn == "false" {
+		log.Printf("example extension: opt-in is disabled")
+	}
+
 	return &extensionapi.EventResponse{}, nil
 }
 

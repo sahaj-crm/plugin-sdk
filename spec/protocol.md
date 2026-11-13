@@ -59,8 +59,8 @@ Params:
 }
 ```
 
-`values` contains only this extension's stored data. `record` is a snapshot of
-the entity model.
+`values` contains only this extension's stored data, keyed by the simple field
+`param`. `record` is a snapshot of the entity model.
 
 Result:
 
@@ -91,12 +91,24 @@ Params:
 
 ```json
 {
-  "name": "course.create",
+  "name": "course.update",
   "phase": "before",
   "entity": "course",
-  "action": "create",
-  "id": "",
-  "input": {"Record": {}, "Extras": {}},
+  "action": "update",
+  "id": "4",
+  "input": {
+    "Record": {
+      "ID": 4,
+      "Name": "Introduction to Sahaj",
+      "StartDate": "2026-01-01"
+    },
+    "Extras": {
+      "com.example.optin": {
+        "opt_in": "true",
+        "options": "one"
+      }
+    }
+  },
   "output": null,
   "error": ""
 }
@@ -108,9 +120,64 @@ Result:
 {"error": ""}
 ```
 
-A non-empty `error` from a `before` handler aborts the operation. Errors from
-`after` and `failed` handlers are logged by the host and do not change the
+### Phases
+
+- `before` runs before the database operation. Return a non-empty `error` to
+  abort. No writes have happened yet.
+- `after` runs after the operation commits. `output` contains the saved result.
+- `failed` runs after an operation error. `error` contains the reason.
+
+Errors from `after` and `failed` handlers are logged and do not change the
 operation result.
+
+### Input
+
+`input` is the JSON form of the operation's input.
+
+For entity **create** and **update**, it is:
+
+```json
+{
+  "Record": { "...": "entity fields..." },
+  "Extras": {
+    "<extension id>": {
+      "<field param>": "value"
+    }
+  }
+}
+```
+
+`Extras` contains every extension field submitted with this operation, grouped
+by extension ID, then by the field's simple `param`.
+
+- Web forms submit strings. A checkbox is `"true"` or `"false"`; multi-value
+  fields are arrays of strings.
+- API clients may submit JSON types directly: booleans, numbers, strings, and
+  arrays.
+- A field that was not submitted is absent.
+- Plugins should read only `Extras["<their own id>"]`.
+
+`Record` keys use the host model's JSON names. Today those are Go field names
+such as `Name`, `StartDate`, and `Status`.
+
+For archive and delete, `input` is just the entity ID. There are no `Extras`.
+
+### Output
+
+`output` is only present on `after`:
+
+- create/update/archive: the resulting entity
+- delete: `{"ID": <id>}`
+
+### EventResponse
+
+```json
+{"error": "", "values": {}}
+```
+
+- `error` aborts a `before` event when non-empty.
+- `values` is reserved for future value patching and is currently ignored by
+  the host.
 
 ## `shutdown`
 
