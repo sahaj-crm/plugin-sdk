@@ -213,7 +213,7 @@ func main() {
 ```
 
 ```sh
-go build -o plugins/example-optin/plugin ./examples/go-optin
+go build -o plugins/go-full/plugin ./examples/go-full
 ```
 
 ## JavaScript
@@ -248,17 +248,22 @@ Bundle to a native executable with PyInstaller:
 
 ```sh
 python3 -m PyInstaller --onefile --name plugin \
-  --paths python examples/python-optin/plugin.py
+  --paths python examples/python-full/plugin.py
 ```
 
 ## Examples
 
-- `examples/go-simple` — the smallest possible Go plugin: one checkbox
-- `examples/go-optin` — checkbox, select with options, notes, Handle logging
-- `examples/js-optin` — same shape as `go-optin`, in JavaScript
-- `examples/python-optin` — same shape as `go-optin`, in Python
+Simple examples have one checkbox. Full examples add a select with options,
+notes, and output logging.
 
-Install all four into a CRM plugins directory:
+- `examples/go-simple`
+- `examples/go-full`
+- `examples/js-simple`
+- `examples/js-full`
+- `examples/python-simple`
+- `examples/python-full`
+
+Install all six into a CRM plugins directory:
 
 ```sh
 ./install-examples.sh /path/to/sahaj-crm/plugins

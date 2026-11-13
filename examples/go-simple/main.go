@@ -22,7 +22,7 @@ func (Extension) Contribute(
 	return &extensionapi.ContributionResponse{
 		Fields: []extensionapi.Field{{
 			Name:  "Enable the simple Go feature",
-			Param: "opt_in",
+			Param: "enabled",
 			Type:  extensionapi.FieldCheckbox,
 			Note:  "Minimal example with one checkbox.",
 		}},
@@ -39,10 +39,10 @@ func (Extension) Handle(
 	}
 	values := input.Extras.Values(extensionID)
 	log.Printf(
-		"simple go extension: %s %s opt_in=%v",
+		"simple go extension: %s %s enabled=%v",
 		ev.Phase,
 		ev.Name,
-		extensionapi.AsBool(values["opt_in"]),
+		extensionapi.AsBool(values["enabled"]),
 	)
 	return &extensionapi.EventResponse{}, nil
 }

@@ -1,6 +1,6 @@
 {
-  "id": "com.example.jsoptin",
-  "name": "JavaScript Example",
+  "id": "com.example.jssimple",
+  "name": "Simple JavaScript Example",
   "version": "0.1.0",
   "api_version": 1,
   "executable": "plugin",

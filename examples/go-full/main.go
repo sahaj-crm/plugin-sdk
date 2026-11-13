@@ -1,7 +1,7 @@
 // Example Go extension. Build it into a manifest directory:
 //
-//	mkdir -p plugins/example-optin
-//	go build -o plugins/example-optin/plugin ./examples/go-optin
+//	mkdir -p plugins/go-full
+//	go build -o plugins/go-full/plugin ./examples/go-full
 package main
 
 import (
@@ -11,7 +11,7 @@ import (
 	extAPI "github.com/sahaj-crm/plugin-sdk"
 )
 
-var name = "com.example.optin"
+var name = "com.example.gofull"
 
 type Extension struct{}
 
@@ -24,18 +24,18 @@ func (Extension) Contribute(
 	}
 	return &extAPI.ContributionResponse{
 		Fields: []extAPI.Field{{
-			Name:  "Enable the example feature",
+			Name:  "Enable the full Go feature",
 			Param: "feature_enabled",
 			Type:  extAPI.FieldCheckbox,
 			Note:  "Note about this checkbox",
 		}, {
-			Name:  "Choose wisely",
+			Name:  "Full Go mode",
 			Param: "feature_mode",
 			Type:  extAPI.FieldSelect,
 			Note:  "Go select",
 			Options: []extAPI.Option{
-				{Value: "one", Label: "1"},
-				{Value: "two", Label: "2"},
+				{Value: "1", Label: "mode 1"},
+				{Value: "2", Label: "mode 2"},
 			},
 		}},
 	}, nil
@@ -45,7 +45,7 @@ func (Extension) Handle(
 	_ context.Context,
 	ev *extAPI.Event,
 ) (*extAPI.EventResponse, error) {
-	log.Printf("example extension: %s %s", ev.Phase, ev.Name)
+	log.Printf("full go extension: %s %s", ev.Phase, ev.Name)
 
 	input, err := extAPI.DecodeEntityInput[map[string]any](ev)
 	if err != nil {
@@ -60,7 +60,7 @@ func (Extension) Handle(
 	log.Printf("plugin fields: feature_enabled=%v feature_mode=%s", enabled, mode)
 
 	if ev.Phase == extAPI.Before && !enabled {
-		log.Printf("example extension: feature is disabled")
+		log.Printf("full go extension: feature is disabled")
 	}
 
 	if ev.Phase == extAPI.After {
@@ -68,7 +68,7 @@ func (Extension) Handle(
 		if err != nil {
 			return nil, err
 		}
-		log.Printf("saved record: %v", output["ID"])
+		log.Printf("full go extension: saved id=%v", output["ID"])
 	}
 
 	return &extAPI.EventResponse{}, nil

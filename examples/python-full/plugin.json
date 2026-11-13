@@ -1,6 +1,6 @@
 {
-  "id": "com.example.pyoptin",
-  "name": "Python Example",
+  "id": "com.example.pyfull",
+  "name": "Full Python Example",
   "version": "0.1.0",
   "api_version": 1,
   "executable": "plugin",
