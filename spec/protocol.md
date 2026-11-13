@@ -169,6 +169,10 @@ For archive and delete, `input` is just the entity ID. There are no `Extras`.
 - create/update/archive: the resulting entity
 - delete: `{"ID": <id>}`
 
+The host does not consume `output`. It is provided so `after` handlers can use
+the committed result for their own side effects. For a course create it is the
+course itself, not the generated sessions/list/form/campaign/page.
+
 ### EventResponse
 
 ```json

@@ -57,6 +57,32 @@ async function handleLine(extension, line) {
   }
 }
 
+/** Return one extension's values from an event's Extras map. */
+export function extensionValues(extras, extensionId) {
+  return (extras && extras[extensionId]) || {};
+}
+
+/** Normalize form/API boolean values. */
+export function asBool(value) {
+  return value === true || value === 1 || value === "true" || value === "1";
+}
+
+/** Normalize a single form/API value. */
+export function asString(value) {
+  return value == null ? "" : String(value);
+}
+
+/** Normalize single or multi-value form/API values. */
+export function asStrings(value) {
+  if (value == null || value === "") {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    return value.map(String);
+  }
+  return [String(value)];
+}
+
 function reply(id, result) {
   process.stdout.write(
     JSON.stringify({ jsonrpc: "2.0", id, result }) + "\n",

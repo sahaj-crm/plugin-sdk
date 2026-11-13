@@ -107,44 +107,40 @@ Types:
 ### Go
 
 ```go
-type Input struct {
-    Record map[string]any            `json:"Record"`
-    Extras map[string]map[string]any `json:"Extras"`
-}
-
 func (Extension) Handle(_ context.Context, ev *extensionapi.Event) (*extensionapi.EventResponse, error) {
-    var in Input
-    if err := json.Unmarshal(ev.Input, &in); err != nil {
+    input, err := extensionapi.DecodeEntityInput[map[string]any](ev)
+    if err != nil {
         return nil, err
     }
 
-    values := in.Extras["com.example.optin"]
-    optIn := values["opt_in"]
-
-    if ev.Phase == extensionapi.Before && !truthy(optIn) {
+    values := input.Extras.Values("com.example.optin")
+    if ev.Phase == extensionapi.Before && !extensionapi.AsBool(values["opt_in"]) {
         return &extensionapi.EventResponse{Error: "opt-in is required"}, nil
     }
+
+    if ev.Phase == extensionapi.After {
+        output, err := extensionapi.DecodeOutput[map[string]any](ev)
+        if err != nil {
+            return nil, err
+        }
+        log.Printf("saved id: %v", output["ID"])
+    }
+
     return &extensionapi.EventResponse{}, nil
 }
-
-func truthy(v any) bool {
-    switch v := v.(type) {
-    case bool:
-        return v
-    case string:
-        return v == "true"
-    default:
-        return false
-    }
-}
 ```
+
+`extensionapi.AsString` and `extensionapi.AsStrings` normalize single and
+multi-value fields.
 
 ### JavaScript
 
 ```js
+import { asBool, extensionValues } from "@sahaj-crm/plugin-sdk";
+
 handle: (event) => {
-  const values = event.input?.Extras?.["com.example.optin"] ?? {};
-  if (event.phase === "before" && values.opt_in !== "true") {
+  const values = extensionValues(event.input?.Extras, "com.example.optin");
+  if (event.phase === "before" && !asBool(values.opt_in)) {
     return { error: "opt-in is required" };
   }
   return {};
@@ -154,10 +150,14 @@ handle: (event) => {
 ### Python
 
 ```python
+from sahaj_crm_plugin_sdk import as_bool, extension_values
+
 def handle(event):
-    extras = event.get("input", {}).get("Extras", {})
-    values = extras.get("com.example.optin", {})
-    if event["phase"] == "before" and values.get("opt_in") != "true":
+    values = extension_values(
+        event.get("input", {}).get("Extras"),
+        "com.example.optin",
+    )
+    if event["phase"] == "before" and not as_bool(values.get("opt_in")):
         return {"error": "opt-in is required"}
     return {}
 ```
@@ -165,8 +165,13 @@ def handle(event):
 ### Phases
 
 - `before`: validate; return `error` to abort.
-- `after`: the operation committed. `event.output` contains the saved entity.
+- `after`: the operation committed. `event.output` contains the saved result.
 - `failed`: the operation failed. `event.error` contains the reason.
+
+`output` is not used by the host. It exists for `after` handlers that need the
+committed result for their own side effects, for example the new record ID or
+the final field values. For a course create it is the course itself, not the
+internally generated sessions, list, form, campaign, or page.
 
 For archive/delete, `input` is just the entity ID and there is no `Extras`.
 Delete `output` is `{"ID": <id>}`.

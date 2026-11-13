@@ -7,9 +7,46 @@ stdin/stdout. `serve` implements the loop; extension authors provide `info`,
 
 import json
 import sys
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, TypedDict
 
 JSONRPC_VERSION = "2.0"
+
+Extras = dict[str, dict[str, Any]]
+
+
+class EntityInput(TypedDict):
+    """Input shape for entity create/update events."""
+
+    Record: dict[str, Any]
+    Extras: Extras
+
+
+def extension_values(extras: Optional[Extras], extension_id: str) -> dict[str, Any]:
+    """Return one extension's values from an event's Extras map."""
+    if not extras:
+        return {}
+    return extras.get(extension_id) or {}
+
+
+def as_bool(value: Any) -> bool:
+    """Normalize form/API boolean values."""
+    return value is True or value == 1 or (
+        isinstance(value, str) and value.lower() in ("true", "1")
+    )
+
+
+def as_string(value: Any) -> str:
+    """Normalize a single form/API value."""
+    return "" if value is None else str(value)
+
+
+def as_strings(value: Any) -> list[str]:
+    """Normalize single or multi-value form/API values."""
+    if value is None or value == "":
+        return []
+    if isinstance(value, list):
+        return [str(item) for item in value]
+    return [str(value)]
 
 
 def serve(

@@ -6,7 +6,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 
 	extensionapi "github.com/sahaj-crm/plugin-sdk"
@@ -42,32 +41,34 @@ func (Extension) Contribute(
 	}, nil
 }
 
-type Input struct {
-	Record map[string]any            `json:"Record"`
-	Extras map[string]map[string]any `json:"Extras"`
-}
-
 func (Extension) Handle(
 	_ context.Context,
 	ev *extensionapi.Event,
 ) (*extensionapi.EventResponse, error) {
 	log.Printf("example extension: %s %s", ev.Phase, ev.Name)
 
-	var input Input
-	if err := json.Unmarshal(ev.Input, &input); err != nil {
+	input, err := extensionapi.DecodeEntityInput[map[string]any](ev)
+	if err != nil {
 		return nil, err
 	}
 
 	// Extras is namespaced by extension id. Read only your own fields.
-	values := input.Extras[name]
-	optIn := values["opt_in"]
-	choice := values["options"]
+	values := input.Extras.Values(name)
+	optIn := extensionapi.AsBool(values["opt_in"])
+	choice := extensionapi.AsString(values["options"])
 
-	log.Printf("plugin fields: opt_in=%v options=%v", optIn, choice)
+	log.Printf("plugin fields: opt_in=%v options=%s", optIn, choice)
 
-	// Web forms submit strings ("true"/"false"); API clients may send booleans.
-	if ev.Phase == extensionapi.Before && optIn == "false" {
+	if ev.Phase == extensionapi.Before && !optIn {
 		log.Printf("example extension: opt-in is disabled")
+	}
+
+	if ev.Phase == extensionapi.After {
+		output, err := extensionapi.DecodeOutput[map[string]any](ev)
+		if err != nil {
+			return nil, err
+		}
+		log.Printf("saved record: %v", output["ID"])
 	}
 
 	return &extensionapi.EventResponse{}, nil
