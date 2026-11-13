@@ -50,6 +50,30 @@ Methods:
 
 The full contract is in [spec/protocol.md](spec/protocol.md).
 
+## Fields
+
+`contribute` returns a flat list of fields:
+
+```json
+{
+  "fields": [{
+    "name": "Enable the example feature",
+    "param": "opt_in",
+    "type": "checkbox",
+    "note": "Stored under the extension's own data."
+  }]
+}
+```
+
+- `param` is the extension-local field key. The host namespaces it to
+  `ext[<extension>][<param>]` for the form and stores the value under the
+  simple key in `extension_data`.
+- `note` renders as help text below the field.
+- Field types: `checkbox`, `checkboxes`, `text`, `textarea`, `select`,
+  `number`.
+- `mode: "required"` shows the required marker.
+- `options` supplies select/checkbox choices.
+
 ## Languages
 
 The SDK is an authoring tool; the installed artifact is always a native

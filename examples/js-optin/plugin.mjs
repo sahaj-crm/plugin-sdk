@@ -4,8 +4,9 @@ serve({
   contribute: () => ({
     fields: [{
       name: "Enable the JavaScript feature",
-      param: "ext[com.example.jsoptin][js_flag]",
+      param: "js_flag",
       type: "checkbox",
+      note: "Stored under the extension's own data.",
     }],
   }),
 

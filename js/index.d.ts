@@ -21,6 +21,7 @@ export interface Field {
   type: "checkbox" | "checkboxes" | "text" | "textarea" | "select" | "number";
   mode?: string;
   placeholder?: string;
+  note?: string;
   options?: Option[];
 }
 

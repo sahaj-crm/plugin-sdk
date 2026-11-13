@@ -68,18 +68,21 @@ Result:
 {
   "fields": [{
     "name": "Enable the example feature",
-    "param": "ext[com.example.optin][opt_in]",
+    "param": "opt_in",
     "type": "checkbox",
     "value": true,
     "mode": "",
     "placeholder": "",
+    "note": "Stored under the extension's own data.",
     "options": []
   }]
 }
 ```
 
-`param` is the full HTML input name and its value is stored under that key.
-The host overlays stored `values` by `param`. Supported field types:
+`param` is the extension-local field key. The host namespaces it to
+`ext[<extension>][<param>]` before rendering and stores the value under the
+simple key in the extension's own data row. The host overlays stored `values`
+by `param`. `note` renders below the input. Supported field types:
 `checkbox`, `checkboxes`, `text`, `textarea`, `select`, `number`.
 
 ## `handle`

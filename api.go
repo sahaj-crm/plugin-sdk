@@ -64,8 +64,8 @@ type Option struct {
 }
 
 // Field mirrors the host's StructField so it can be rendered by the same form
-// template. Param is the full input name, e.g.
-// "ext[com.example.optin][opt_in]".
+// template. Param is the field key; the host namespaces it as
+// "ext[<extension>][<param>]" before rendering.
 type Field struct {
 	Name        string   `json:"name,omitempty"`
 	Param       string   `json:"param"`
@@ -73,6 +73,7 @@ type Field struct {
 	Type        string   `json:"type"`
 	Mode        string   `json:"mode,omitempty"`
 	Placeholder string   `json:"placeholder,omitempty"`
+	Note        string   `json:"note,omitempty"`
 	Options     []Option `json:"options,omitempty"`
 }
 

@@ -26,12 +26,14 @@ func (Extension) Contribute(
 	return &extensionapi.ContributionResponse{
 		Fields: []extensionapi.Field{{
 			Name:  "Enable the example feature",
-			Param: "ext[com.example.optin][opt_in]",
+			Param: "opt_in",
 			Type:  extensionapi.FieldCheckbox,
+			Note:  "Stored under the extension's own data.",
 		}, {
 			Name:  "Choose wisely",
-			Param: "ext[com.example.optin][options]",
+			Param: "options",
 			Type:  extensionapi.FieldSelect,
+			Note:  "Go select",
 			Options: []extensionapi.Option{
 				{Value: "one", Label: "1"},
 				{Value: "two", Label: "2"},

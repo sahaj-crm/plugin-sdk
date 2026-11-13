@@ -11,8 +11,9 @@ def contribute(_request):
     return {
         "fields": [{
             "name": "Enable the Python feature",
-            "param": "ext[com.example.pyoptin][py_flag]",
+            "param": "py_flag",
             "type": "checkbox",
+            "note": "Stored under the extension's own data.",
         }],
     }
 
