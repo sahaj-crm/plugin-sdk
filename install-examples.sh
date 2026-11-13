@@ -14,10 +14,14 @@ TARGET=${1:-"$ROOT/../sahaj-crm/plugins"}
 BUILD=$(mktemp -d)
 trap 'rm -rf "$BUILD"' EXIT
 
-mkdir -p "$TARGET/go-optin" "$TARGET/js-optin" "$TARGET/python-optin"
+mkdir -p "$TARGET/go-simple" "$TARGET/go-optin" "$TARGET/js-optin" "$TARGET/python-optin"
+
+echo "Building simple Go example..."
+cd "$ROOT"
+go build -o "$TARGET/go-simple/plugin" ./examples/go-simple
+cp examples/go-simple/plugin.json "$TARGET/go-simple/"
 
 echo "Building Go example..."
-cd "$ROOT"
 go build -o "$TARGET/go-optin/plugin" ./examples/go-optin
 cp examples/go-optin/plugin.json "$TARGET/go-optin/"
 

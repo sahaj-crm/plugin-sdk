@@ -25,12 +25,12 @@ func (Extension) Contribute(
 	return &extAPI.ContributionResponse{
 		Fields: []extAPI.Field{{
 			Name:  "Enable the example feature",
-			Param: "opt_in",
+			Param: "feature_enabled",
 			Type:  extAPI.FieldCheckbox,
 			Note:  "Note about this checkbox",
 		}, {
 			Name:  "Choose wisely",
-			Param: "options",
+			Param: "feature_mode",
 			Type:  extAPI.FieldSelect,
 			Note:  "Go select",
 			Options: []extAPI.Option{
@@ -54,13 +54,13 @@ func (Extension) Handle(
 
 	// Extras is namespaced by extension id. Read only your own fields.
 	values := input.Extras.Values(name)
-	optIn := extAPI.AsBool(values["opt_in"])
-	choice := extAPI.AsString(values["options"])
+	enabled := extAPI.AsBool(values["feature_enabled"])
+	mode := extAPI.AsString(values["feature_mode"])
 
-	log.Printf("plugin fields: opt_in=%v options=%s", optIn, choice)
+	log.Printf("plugin fields: feature_enabled=%v feature_mode=%s", enabled, mode)
 
-	if ev.Phase == extAPI.Before && !optIn {
-		log.Printf("example extension: opt-in is disabled")
+	if ev.Phase == extAPI.Before && !enabled {
+		log.Printf("example extension: feature is disabled")
 	}
 
 	if ev.Phase == extAPI.After {

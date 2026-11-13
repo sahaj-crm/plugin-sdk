@@ -253,11 +253,12 @@ python3 -m PyInstaller --onefile --name plugin \
 
 ## Examples
 
-- `examples/go-optin`
-- `examples/js-optin`
-- `examples/python-optin`
+- `examples/go-simple` — the smallest possible Go plugin: one checkbox
+- `examples/go-optin` — checkbox, select with options, notes, Handle logging
+- `examples/js-optin` — same shape as `go-optin`, in JavaScript
+- `examples/python-optin` — same shape as `go-optin`, in Python
 
-Install all three into a CRM plugins directory:
+Install all four into a CRM plugins directory:
 
 ```sh
 ./install-examples.sh /path/to/sahaj-crm/plugins
