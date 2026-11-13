@@ -21,6 +21,14 @@ class EntityInput(TypedDict):
     Extras: Extras
 
 
+class EventResponse(TypedDict, total=False):
+    """Response shape for a handle call."""
+
+    error: str
+    patch: dict[str, Any]
+    values: dict[str, Any]
+
+
 def extension_values(extras: Optional[Extras], extension_id: str) -> dict[str, Any]:
     """Return one extension's values from an event's Extras map."""
     if not extras:

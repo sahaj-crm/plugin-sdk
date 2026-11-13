@@ -29,12 +29,13 @@ type Event struct {
 	Error  string          `json:"error,omitempty"`
 }
 
-// EventResponse lets a before-handler reject an operation with an error.
-// Values may patch the extension's own stored data; core entity fields are
-// intentionally not mutable by extensions.
+// EventResponse lets a before-handler reject or modify an operation.
+// Patch values are applied to the entity record before saving, keyed by Go
+// field name (for example "MeetingLink").
 type EventResponse struct {
 	Error  string         `json:"error,omitempty"`
-	Values map[string]any `json:"values,omitempty"`
+	Patch  map[string]any `json:"patch,omitempty"`
+	Values map[string]any `json:"values,omitempty"` // reserved for extension data
 }
 
 // Info describes an extension and what it wants to receive.

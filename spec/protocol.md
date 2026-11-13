@@ -176,12 +176,26 @@ course itself, not the generated sessions/list/form/campaign/page.
 ### EventResponse
 
 ```json
-{"error": "", "values": {}}
+{
+  "error": "",
+  "patch": {
+    "MeetingLink": "https://zoom.us/j/123",
+    "MeetingID": "123"
+  },
+  "values": {}
+}
 ```
 
 - `error` aborts a `before` event when non-empty.
-- `values` is reserved for future value patching and is currently ignored by
-  the host.
+- `patch` applies entity field changes before a create/update is saved. Keys
+  are Go field names, matching the `Record` payload. The value is decoded into
+  the field's Go type.
+- `values` is reserved and currently ignored by the host.
+
+Patches are only supported on entity create/update events. They are applied
+after all interested before handlers run, so a later plugin overrides an
+earlier plugin's value for the same field. After/failed handlers receive the
+patched input.
 
 ## `shutdown`
 

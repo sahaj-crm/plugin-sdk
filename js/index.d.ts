@@ -57,6 +57,7 @@ export interface Event<TInput = unknown, TOutput = unknown> {
 
 export interface EventResponse {
   error?: string;
+  patch?: Record<string, unknown>;
   values?: Record<string, unknown>;
 }
 

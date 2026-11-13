@@ -162,6 +162,36 @@ def handle(event):
     return {}
 ```
 
+### Patching entity fields
+
+A `before` handler can populate entity fields by returning `patch`:
+
+```json
+{
+  "patch": {
+    "MeetingLink": "https://zoom.us/j/123456789",
+    "MeetingID": "123456789"
+  }
+}
+```
+
+Go:
+
+```go
+return &extensionapi.EventResponse{
+    Patch: map[string]any{
+        "MeetingLink": "https://zoom.us/j/123456789",
+        "MeetingID":   "123456789",
+    },
+}, nil
+```
+
+Keys are Go field names, matching the `Record` payload. Values are decoded into
+the field's Go type. Patches are only supported for entity create/update and
+are applied before the database write. After/failed handlers receive the
+patched input. Plugins are trusted, so any matching exported field can be
+patched.
+
 ### Phases
 
 - `before`: validate; return `error` to abort.
