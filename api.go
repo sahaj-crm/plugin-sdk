@@ -48,7 +48,8 @@ type Info struct {
 	Targets    []string `json:"targets,omitempty"` // "course.new", "course.edit", ...
 }
 
-// Supported form field types. These match the host's StructField.Type values.
+// Common form field types. Type accepts any valid HTML input type; these
+// constants cover the types with dedicated host rendering and common values.
 const (
 	FieldCheckbox   = "checkbox"
 	FieldCheckboxes = "checkboxes"

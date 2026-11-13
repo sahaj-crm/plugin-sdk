@@ -69,10 +69,16 @@ The full contract is in [spec/protocol.md](spec/protocol.md).
   `ext[<extension>][<param>]` for the form and stores the value under the
   simple key in `extension_data`.
 - `note` renders as help text below the field.
-- Field types: `checkbox`, `checkboxes`, `text`, `textarea`, `select`,
-  `number`.
-- `mode: "required"` shows the required marker.
-- `options` supplies select/checkbox choices.
+- Special types: `textarea`, `select`, `checkbox`, `checkboxes`, `date`,
+  `datetime`, `duration`, `route`.
+- Any other valid HTML input type works: `text`, `email`, `url`, `tel`,
+  `number`, `password`, `search`, `hidden`, `color`, `range`, ...
+- `mode`: `""`, `required`, `disabled`, `readonly`, `hidden`, `controlled`.
+- `options` supplies `select` / `checkboxes` choices as
+  `{"value": "...", "label": "..."}`.
+
+See [spec/protocol.md](spec/protocol.md) for the full field, target and event
+reference.
 
 ## Using field values in `handle`
 
