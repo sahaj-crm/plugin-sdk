@@ -1,8 +1,24 @@
 # Sahaj Plugin Protocol v1
 
-Plugins are executable child processes. The host writes one JSON object per
-line to stdin and reads one JSON object per line from stdout. stderr is for
-logs and is never parsed.
+A plugin is one directory containing a native executable and `plugin.json`.
+The host runs the executable directly; there is no runtime handshake.
+
+## Manifest
+
+```json
+{
+  "id": "com.example.optin",
+  "name": "Example Opt-in",
+  "version": "0.1.0",
+  "api_version": 1,
+  "executable": "plugin",
+  "targets": ["course.new", "course.edit"],
+  "events": ["course.create", "course.update"]
+}
+```
+
+`targets` and `events` support exact names and a trailing `*` wildcard.
+`api_version` is validated by the host before the plugin is loaded.
 
 ## Transport rules
 
@@ -16,7 +32,7 @@ logs and is never parsed.
 ## Request
 
 ```json
-{"jsonrpc":"2.0","id":1,"method":"info","params":{}}
+{"jsonrpc":"2.0","id":1,"method":"contribute","params":{}}
 ```
 
 ## Response
@@ -28,25 +44,6 @@ logs and is never parsed.
 ```json
 {"jsonrpc":"2.0","id":1,"error":{"code":-32000,"message":"reason"}}
 ```
-
-## `info`
-
-Params: `{}`
-
-Result:
-
-```json
-{
-  "id": "com.example.optin",
-  "name": "Example Opt-in",
-  "version": "0.1.0",
-  "api_version": 1,
-  "targets": ["course.new", "course.edit"],
-  "events": ["course.create", "course.update"]
-}
-```
-
-`targets` and `events` support exact names and a trailing `*` wildcard.
 
 ## `contribute`
 
@@ -126,8 +123,3 @@ Result:
 ```
 
 The plugin should exit after replying. The host may also close stdin.
-
-## Versioning
-
-`api_version` is checked by the host during `info`. A plugin with an
-unsupported version is not loaded.

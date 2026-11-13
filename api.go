@@ -98,9 +98,9 @@ type ContributionResponse struct {
 	Sections []Section `json:"sections"`
 }
 
-// Extension is implemented in-process or by a stdio child-process client.
+// Extension is the behavior implemented by a plugin. Its metadata lives in
+// plugin.json, so no runtime handshake is required.
 type Extension interface {
-	Info(context.Context) (*Info, error)
 	Contribute(context.Context, *ContributionRequest) (*ContributionResponse, error)
 	Handle(context.Context, *Event) (*EventResponse, error)
 }

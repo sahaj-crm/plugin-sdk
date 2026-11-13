@@ -13,18 +13,16 @@ JSONRPC_VERSION = "2.0"
 
 
 def serve(
-    info: Optional[Callable[[], Any]] = None,
     contribute: Optional[Callable[[dict], Any]] = None,
     handle: Optional[Callable[[dict], Any]] = None,
     extension: Any = None,
 ) -> None:
     """Run an extension until stdin closes or a shutdown request arrives."""
     if extension is not None:
-        info = info or extension.info
         contribute = contribute or extension.contribute
         handle = handle or extension.handle
-    if info is None or contribute is None or handle is None:
-        raise ValueError("serve requires info, contribute and handle callables")
+    if contribute is None or handle is None:
+        raise ValueError("serve requires contribute and handle callables")
 
     for line in sys.stdin:
         if not line.strip():
@@ -40,9 +38,7 @@ def serve(
         params = request.get("params") or {}
 
         try:
-            if method == "info":
-                result = info()
-            elif method == "contribute":
+            if method == "contribute":
                 result = contribute(params)
             elif method == "handle":
                 result = handle(params)

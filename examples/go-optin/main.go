@@ -13,17 +13,6 @@ import (
 
 type Extension struct{}
 
-func (Extension) Info(context.Context) (*extensionapi.Info, error) {
-	return &extensionapi.Info{
-		ID:         "com.example.optin",
-		Name:       "Example Opt-in",
-		Version:    "0.1.0",
-		APIVersion: extensionapi.APIVersion,
-		Targets:    []string{"course.new", "course.edit"},
-		Events:     []string{"course.create", "course.update"},
-	}, nil
-}
-
 func (Extension) Contribute(
 	_ context.Context,
 	req *extensionapi.ContributionRequest,

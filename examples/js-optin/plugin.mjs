@@ -1,15 +1,6 @@
-import { serve } from "./sdk.js";
+import { serve } from "../../js/index.js";
 
 serve({
-  info: () => ({
-    id: "com.example.jsoptin",
-    name: "JavaScript Example",
-    version: "0.1.0",
-    api_version: 1,
-    targets: ["course.new", "course.edit"],
-    events: ["course.create", "course.update"],
-  }),
-
   contribute: () => ({
     sections: [{
       title: "JavaScript Options",

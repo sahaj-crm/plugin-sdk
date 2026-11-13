@@ -1,21 +1,10 @@
 #!/usr/bin/env python3
-"""Example Python extension. The SDK is vendored in the plugin directory, so
-this can be copied directly into the host's plugins folder."""
+"""Example Python extension. Build it as a native executable with PyInstaller;
+the host only runs the resulting binary."""
 
 import sys
 
 from sahaj_crm_plugin_sdk import serve
-
-
-def info():
-    return {
-        "id": "com.example.pyoptin",
-        "name": "Python Example",
-        "version": "0.1.0",
-        "api_version": 1,
-        "targets": ["course.new", "course.edit"],
-        "events": ["course.create", "course.update"],
-    }
 
 
 def contribute(_request):
@@ -36,4 +25,4 @@ def handle(event):
     return {}
 
 
-serve(info=info, contribute=contribute, handle=handle)
+serve(contribute=contribute, handle=handle)

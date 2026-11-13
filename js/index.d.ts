@@ -60,7 +60,6 @@ export interface EventResponse {
 }
 
 export interface Extension {
-  info: () => Info | Promise<Info>;
   contribute: (
     req: ContributionRequest,
   ) => ContributionResponse | Promise<ContributionResponse>;

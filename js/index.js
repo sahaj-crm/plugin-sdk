@@ -4,7 +4,6 @@ import { createInterface } from "node:readline";
  * Run an extension over the NDJSON JSON-RPC protocol.
  *
  * @param {{
- *   info: () => object | Promise<object>,
  *   contribute: (req: object) => object | Promise<object>,
  *   handle: (event: object) => object | Promise<object>,
  * }} extension
@@ -38,9 +37,6 @@ async function handleLine(extension, line) {
   try {
     let result;
     switch (request.method) {
-      case "info":
-        result = await extension.info();
-        break;
       case "contribute":
         result = await extension.contribute(request.params || {});
         break;

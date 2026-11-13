@@ -1,19 +1,49 @@
 # Sahaj CRM Plugin SDK
 
-SDK and protocol for Sahaj CRM extensions. Plugins are executable child
-processes that speak newline-delimited JSON-RPC over stdin/stdout.
+SDK and protocol for Sahaj CRM extensions.
+
+A plugin is **one directory containing one native executable and one
+`plugin.json` manifest**:
+
+```text
+plugins/example-optin/
+  plugin.json
+  plugin
+```
+
+The host runs the executable directly. It does not care whether it was written
+in Go, JavaScript, Python, Rust, or anything else.
+
+## Manifest
+
+The manifest is authoritative for plugin metadata. There is no runtime `info`
+handshake.
+
+```json
+{
+  "id": "com.example.optin",
+  "name": "Example Opt-in",
+  "version": "0.1.0",
+  "api_version": 1,
+  "executable": "plugin",
+  "targets": ["course.new", "course.edit"],
+  "events": ["course.create", "course.update"]
+}
+```
+
+`executable` is relative to the plugin directory. On Windows the host also
+tries `<executable>.exe` when the exact file is missing.
 
 ## Protocol
 
-One JSON object per line:
+One JSON object per line over stdin/stdout:
 
 ```json
-{"jsonrpc":"2.0","id":1,"method":"info","params":{}}
+{"jsonrpc":"2.0","id":1,"method":"contribute","params":{}}
 ```
 
 Methods:
 
-- `info` — id, name, version, API version, targets, events
 - `contribute` — declarative fields for a modal
 - `handle` — before/after/failed lifecycle events
 - `shutdown` — optional graceful exit
@@ -22,11 +52,14 @@ The full contract is in [spec/protocol.md](spec/protocol.md).
 
 ## Languages
 
-| Language | Package |
-|---|---|
-| Go | `github.com/sahaj-crm/plugin-sdk` |
-| JavaScript | `@sahaj-crm/plugin-sdk` |
-| Python | `sahaj-crm-plugin-sdk` |
+The SDK is an authoring tool; the installed artifact is always a native
+executable.
+
+| Language | Package | Build |
+|---|---|---|
+| Go | `github.com/sahaj-crm/plugin-sdk` | `go build` |
+| JavaScript | `@sahaj-crm/plugin-sdk` | `bun build --compile` |
+| Python | `sahaj-crm-plugin-sdk` | PyInstaller |
 
 ## Go
 
@@ -39,17 +72,6 @@ import (
 )
 
 type Extension struct{}
-
-func (Extension) Info(context.Context) (*extensionapi.Info, error) {
-    return &extensionapi.Info{
-        ID: "com.example.optin",
-        Name: "Example Opt-in",
-        Version: "0.1.0",
-        APIVersion: extensionapi.APIVersion,
-        Targets: []string{"course.new", "course.edit"},
-        Events: []string{"course.create", "course.update"},
-    }, nil
-}
 
 func (Extension) Contribute(context.Context, *extensionapi.ContributionRequest) (*extensionapi.ContributionResponse, error) {
     return &extensionapi.ContributionResponse{Sections: []extensionapi.Section{...}}, nil
@@ -64,19 +86,8 @@ func main() {
 }
 ```
 
-Build a plugin into a manifest directory:
-
 ```sh
-mkdir -p plugins/example-optin
 go build -o plugins/example-optin/plugin ./examples/go-optin
-```
-
-```json
-{
-  "command": "./plugin",
-  "args": [],
-  "cwd": "."
-}
 ```
 
 ## JavaScript
@@ -85,10 +96,15 @@ go build -o plugins/example-optin/plugin ./examples/go-optin
 import { serve } from "@sahaj-crm/plugin-sdk";
 
 serve({
-  info: () => ({ ... }),
   contribute: (req) => ({ sections: [...] }),
   handle: (event) => ({}),
 });
+```
+
+Bundle to a native executable with Bun:
+
+```sh
+bun build --compile plugin.mjs --outfile plugins/example-optin/plugin
 ```
 
 ## Python
@@ -97,10 +113,16 @@ serve({
 from sahaj_crm_plugin_sdk import serve
 
 serve(
-    info=lambda: {...},
     contribute=lambda req: {"sections": [...]},
     handle=lambda event: {},
 )
+```
+
+Bundle to a native executable with PyInstaller:
+
+```sh
+python3 -m PyInstaller --onefile --name plugin \
+  --paths python examples/python-optin/plugin.py
 ```
 
 ## Examples
@@ -115,9 +137,14 @@ Install all three into a CRM plugins directory:
 ./install-examples.sh /path/to/sahaj-crm/plugins
 ```
 
-The JS and Python examples vendor a copy of their SDK so they can be copied
-directly into the plugins directory. The Go example is compiled by the install
-script.
+Requirements:
+
+- Go
+- Bun
+- Python 3 with `pyinstaller`
+
+The script builds each example into a native executable and copies the
+manifest. No runtime or SDK files are installed into the plugins directory.
 
 ## Streaming and concurrency
 

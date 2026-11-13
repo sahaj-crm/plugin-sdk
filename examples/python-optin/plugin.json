@@ -1,5 +1,9 @@
 {
-  "command": "python3",
-  "args": ["plugin.py"],
-  "cwd": "."
+  "id": "com.example.pyoptin",
+  "name": "Python Example",
+  "version": "0.1.0",
+  "api_version": 1,
+  "executable": "plugin",
+  "targets": ["course.new", "course.edit"],
+  "events": ["course.create", "course.update"]
 }

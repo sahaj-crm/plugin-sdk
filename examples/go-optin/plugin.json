@@ -1,5 +1,9 @@
 {
-  "command": "./plugin",
-  "args": [],
-  "cwd": "."
+  "id": "com.example.optin",
+  "name": "Example Opt-in",
+  "version": "0.1.0",
+  "api_version": 1,
+  "executable": "plugin",
+  "targets": ["course.new", "course.edit"],
+  "events": ["course.create", "course.update"]
 }

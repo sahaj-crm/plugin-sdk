@@ -63,12 +63,6 @@ func Serve(ext Extension) {
 func dispatch(ext Extension, req Request) (any, *RPCError) {
 	ctx := context.Background()
 	switch req.Method {
-	case "info":
-		info, err := ext.Info(ctx)
-		if err != nil {
-			return nil, &RPCError{Code: -32000, Message: err.Error()}
-		}
-		return info, nil
 	case "contribute":
 		var in ContributionRequest
 		if err := json.Unmarshal(req.Params, &in); err != nil {

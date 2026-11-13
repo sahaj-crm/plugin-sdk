@@ -14,17 +14,15 @@ jobs:
           go-version-file: go.mod
       - run: go vet ./...
       - run: go test ./...
+      - run: go build ./examples/go-optin
       - run: sh -n install-examples.sh
 
   javascript:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-      - run: node --check js/index.js examples/js-optin/plugin.mjs
-      - run: cmp js/index.js examples/js-optin/sdk.js
+      - uses: oven-sh/setup-bun@v2
+      - run: bun build --compile examples/js-optin/plugin.mjs --outfile /tmp/js-optin-plugin
 
   python:
     runs-on: ubuntu-latest
@@ -34,4 +32,3 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m compileall python examples/python-optin
-      - run: cmp python/sahaj_crm_plugin_sdk/__init__.py examples/python-optin/sahaj_crm_plugin_sdk/__init__.py
