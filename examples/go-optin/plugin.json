@@ -4,6 +4,6 @@
   "version": "0.1.0",
   "api_version": 1,
   "executable": "plugin",
-  "targets": ["course.new", "course.edit"],
+  "targets": ["course.new", "course.edit", "contact.new"],
   "events": ["course.create", "course.update"]
 }

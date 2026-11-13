@@ -2,13 +2,10 @@ import { serve } from "../../js/index.js";
 
 serve({
   contribute: () => ({
-    sections: [{
-      title: "JavaScript Options",
-      fields: [{
-        key: "js_flag",
-        label: "Enable the JavaScript feature",
-        type: "checkbox",
-      }],
+    fields: [{
+      name: "Enable the JavaScript feature",
+      param: "ext[com.example.jsoptin][js_flag]",
+      type: "checkbox",
     }],
   }),
 

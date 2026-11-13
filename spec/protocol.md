@@ -66,24 +66,21 @@ Result:
 
 ```json
 {
-  "sections": [{
-    "extension": "com.example.optin",
-    "title": "Example Options",
-    "fields": [{
-      "extension": "com.example.optin",
-      "key": "opt_in",
-      "label": "Enable the example feature",
-      "type": "checkbox",
-      "value": true,
-      "options": [],
-      "required": false
-    }]
+  "fields": [{
+    "name": "Enable the example feature",
+    "param": "ext[com.example.optin][opt_in]",
+    "type": "checkbox",
+    "value": true,
+    "mode": "",
+    "placeholder": "",
+    "options": []
   }]
 }
 ```
 
-The host fills empty `extension` values and overlays stored `values`. Supported
-field types: `checkbox`, `text`, `textarea`, `select`, `number`.
+`param` is the full HTML input name and its value is stored under that key.
+The host overlays stored `values` by `param`. Supported field types:
+`checkbox`, `checkboxes`, `text`, `textarea`, `select`, `number`.
 
 ## `handle`
 

@@ -74,7 +74,7 @@ import (
 type Extension struct{}
 
 func (Extension) Contribute(context.Context, *extensionapi.ContributionRequest) (*extensionapi.ContributionResponse, error) {
-    return &extensionapi.ContributionResponse{Sections: []extensionapi.Section{...}}, nil
+    return &extensionapi.ContributionResponse{Fields: []extensionapi.Field{...}}, nil
 }
 
 func (Extension) Handle(context.Context, *extensionapi.Event) (*extensionapi.EventResponse, error) {
@@ -96,7 +96,7 @@ go build -o plugins/example-optin/plugin ./examples/go-optin
 import { serve } from "@sahaj-crm/plugin-sdk";
 
 serve({
-  contribute: (req) => ({ sections: [...] }),
+  contribute: (req) => ({ fields: [...] }),
   handle: (event) => ({}),
 });
 ```
@@ -113,7 +113,7 @@ bun build --compile plugin.mjs --outfile plugins/example-optin/plugin
 from sahaj_crm_plugin_sdk import serve
 
 serve(
-    contribute=lambda req: {"sections": [...]},
+    contribute=lambda req: {"fields": [...]},
     handle=lambda event: {},
 )
 ```

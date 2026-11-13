@@ -15,20 +15,13 @@ export interface Option {
 }
 
 export interface Field {
-  extension?: string;
-  key: string;
-  label: string;
-  help?: string;
-  type: "checkbox" | "text" | "textarea" | "select" | "number";
+  name?: string;
+  param: string;
   value?: unknown;
+  type: "checkbox" | "checkboxes" | "text" | "textarea" | "select" | "number";
+  mode?: string;
+  placeholder?: string;
   options?: Option[];
-  required?: boolean;
-}
-
-export interface Section {
-  extension?: string;
-  title: string;
-  fields: Field[];
 }
 
 export interface ContributionRequest {
@@ -40,7 +33,7 @@ export interface ContributionRequest {
 }
 
 export interface ContributionResponse {
-  sections: Section[];
+  fields: Field[];
 }
 
 export interface Event {

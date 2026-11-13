@@ -6,10 +6,13 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 
 	extensionapi "github.com/sahaj-crm/plugin-sdk"
 )
+
+var name = "com.example.optin"
 
 type Extension struct{}
 
@@ -21,19 +24,38 @@ func (Extension) Contribute(
 		return &extensionapi.ContributionResponse{}, nil
 	}
 	return &extensionapi.ContributionResponse{
-		Sections: []extensionapi.Section{{
-			Title: "Example Options",
-			Fields: []extensionapi.Field{{
-				Key:   "opt_in",
-				Label: "Enable the example feature for this course",
-				Type:  extensionapi.FieldCheckbox,
-			}},
+		Fields: []extensionapi.Field{{
+			Name:  "Enable the example feature",
+			Param: "ext[com.example.optin][opt_in]",
+			Type:  extensionapi.FieldCheckbox,
+		}, {
+			Name:  "Choose wisely",
+			Param: "ext[com.example.optin][options]",
+			Type:  extensionapi.FieldSelect,
+			Options: []extensionapi.Option{
+				{Value: "one", Label: "1"},
+				{Value: "two", Label: "2"},
+			},
 		}},
 	}, nil
 }
 
-func (Extension) Handle(_ context.Context, ev *extensionapi.Event) (*extensionapi.EventResponse, error) {
+type Input struct {
+	Record map[string]any
+	Extras map[string]any
+}
+
+func (Extension) Handle(
+	_ context.Context,
+	ev *extensionapi.Event,
+) (*extensionapi.EventResponse, error) {
 	log.Printf("example extension: %s %s", ev.Phase, ev.Name)
+	var input Input
+	err := json.Unmarshal(ev.Input, &input)
+	if err != nil {
+		return nil, err
+	}
+	log.Println(input.Extras[name])
 	return &extensionapi.EventResponse{}, nil
 }
 

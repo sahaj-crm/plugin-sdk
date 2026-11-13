@@ -9,13 +9,10 @@ from sahaj_crm_plugin_sdk import serve
 
 def contribute(_request):
     return {
-        "sections": [{
-            "title": "Python Options",
-            "fields": [{
-                "key": "py_flag",
-                "label": "Enable the Python feature",
-                "type": "checkbox",
-            }],
+        "fields": [{
+            "name": "Enable the Python feature",
+            "param": "ext[com.example.pyoptin][py_flag]",
+            "type": "checkbox",
         }],
     }
 

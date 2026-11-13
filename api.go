@@ -47,15 +47,14 @@ type Info struct {
 	Targets    []string `json:"targets,omitempty"` // "course.new", "course.edit", ...
 }
 
-// FieldType is a declarative input type rendered by the host UI.
-type FieldType string
-
+// Supported form field types. These match the host's StructField.Type values.
 const (
-	FieldCheckbox FieldType = "checkbox"
-	FieldText     FieldType = "text"
-	FieldTextarea FieldType = "textarea"
-	FieldSelect   FieldType = "select"
-	FieldNumber   FieldType = "number"
+	FieldCheckbox   = "checkbox"
+	FieldCheckboxes = "checkboxes"
+	FieldText       = "text"
+	FieldTextarea   = "textarea"
+	FieldSelect     = "select"
+	FieldNumber     = "number"
 )
 
 // Option is one choice in a select field.
@@ -64,24 +63,17 @@ type Option struct {
 	Label string `json:"label"`
 }
 
-// Field is one extension-contributed form field. Extension and Key are filled
-// by the host if the extension leaves them empty.
+// Field mirrors the host's StructField so it can be rendered by the same form
+// template. Param is the full input name, e.g.
+// "ext[com.example.optin][opt_in]".
 type Field struct {
-	Extension string    `json:"extension"`
-	Key       string    `json:"key"`
-	Label     string    `json:"label"`
-	Help      string    `json:"help,omitempty"`
-	Type      FieldType `json:"type"`
-	Value     any       `json:"value,omitempty"`
-	Options   []Option  `json:"options,omitempty"`
-	Required  bool      `json:"required,omitempty"`
-}
-
-// Section groups fields contributed by one extension.
-type Section struct {
-	Extension string  `json:"extension"`
-	Title     string  `json:"title"`
-	Fields    []Field `json:"fields"`
+	Name        string   `json:"name,omitempty"`
+	Param       string   `json:"param"`
+	Value       any      `json:"value,omitempty"`
+	Type        string   `json:"type"`
+	Mode        string   `json:"mode,omitempty"`
+	Placeholder string   `json:"placeholder,omitempty"`
+	Options     []Option `json:"options,omitempty"`
 }
 
 // ContributionRequest asks an extension for fields for a modal target.
@@ -95,7 +87,7 @@ type ContributionRequest struct {
 
 // ContributionResponse is the declarative UI contribution of an extension.
 type ContributionResponse struct {
-	Sections []Section `json:"sections"`
+	Fields []Field `json:"fields"`
 }
 
 // Extension is the behavior implemented by a plugin. Its metadata lives in
