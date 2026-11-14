@@ -5,5 +5,25 @@
   "api_version": 1,
   "executable": "plugin",
   "targets": ["course.new", "course.edit"],
-  "events": ["course.create", "course.update"]
+  "events": ["course.create", "course.update"],
+  "settings": [
+    {
+      "key": "default_mode",
+      "name": "Default Mode",
+      "type": "select",
+      "value": "one",
+      "options": [
+        { "value": "one", "label": "Mode 1" },
+        { "value": "two", "label": "Mode 2" }
+      ],
+      "note": "Used when no mode has been saved for the entity."
+    },
+    {
+      "key": "api_key",
+      "name": "API Key",
+      "type": "password",
+      "secret": true,
+      "note": "Optional. Never logged or returned to the admin UI."
+    }
+  ]
 }

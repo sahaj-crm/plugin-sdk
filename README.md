@@ -332,7 +332,8 @@ python3 -m PyInstaller --onefile --name plugin \
 ## Examples
 
 Simple examples have one checkbox. Full examples add a select with options,
-notes, and output logging.
+notes, output logging, and two deployment settings (`default_mode` and a secret
+`api_key`) that show how settings are read in `contribute` and `handle`.
 
 - `examples/go-simple`
 - `examples/go-full`

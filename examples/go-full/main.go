@@ -22,6 +22,10 @@ func (Extension) Contribute(
 	if req.Action != "new" && req.Action != "edit" {
 		return &extAPI.ContributionResponse{}, nil
 	}
+	defaultMode := extAPI.AsString(req.Settings["default_mode"])
+	if defaultMode == "" {
+		defaultMode = "one"
+	}
 	return &extAPI.ContributionResponse{
 		Fields: []extAPI.Field{{
 			Name:  "Enable the full Go feature",
@@ -32,10 +36,11 @@ func (Extension) Contribute(
 			Name:  "Full Go mode",
 			Param: "feature_mode",
 			Type:  extAPI.FieldSelect,
-			Note:  "Go select",
+			Value: defaultMode,
+			Note:  "Defaults from the extension setting.",
 			Options: []extAPI.Option{
-				{Value: "1", Label: "mode 1"},
-				{Value: "2", Label: "mode 2"},
+				{Value: "one", Label: "Mode 1"},
+				{Value: "two", Label: "Mode 2"},
 			},
 		}},
 	}, nil
@@ -46,6 +51,11 @@ func (Extension) Handle(
 	ev *extAPI.Event,
 ) (*extAPI.EventResponse, error) {
 	log.Printf("full go extension: %s %s", ev.Phase, ev.Name)
+	log.Printf(
+		"settings: default_mode=%s api_key_configured=%v",
+		extAPI.AsString(ev.Settings["default_mode"]),
+		extAPI.AsString(ev.Settings["api_key"]) != "",
+	)
 
 	input, err := extAPI.DecodeEntityInput[map[string]any](ev)
 	if err != nil {

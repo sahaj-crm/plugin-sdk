@@ -14,7 +14,9 @@ from sahaj_crm_plugin_sdk import (
 EXTENSION_ID = "com.example.pyfull"
 
 
-def contribute(_request):
+def contribute(request):
+    settings = request.get("settings") or {}
+    default_mode = as_string(settings.get("default_mode")) or "one"
     return {
         "fields": [{
             "name": "Enable the full Python feature",
@@ -25,10 +27,11 @@ def contribute(_request):
             "name": "Full Python mode",
             "param": "feature_mode",
             "type": "select",
-            "note": "Python select",
+            "value": default_mode,
+            "note": "Defaults from the extension setting.",
             "options": [
-                {"value": "one", "label": "1"},
-                {"value": "two", "label": "2"},
+                {"value": "one", "label": "Mode 1"},
+                {"value": "two", "label": "Mode 2"},
             ],
         }],
     }
@@ -37,10 +40,13 @@ def contribute(_request):
 def handle(event):
     input_data = event.get("input") or {}
     values = extension_values(input_data.get("Extras"), EXTENSION_ID)
+    settings = event.get("settings") or {}
     print(
         f"full python extension: {event['phase']} {event['name']} "
         f"feature_enabled={as_bool(values.get('feature_enabled'))} "
-        f"feature_mode={as_string(values.get('feature_mode'))}",
+        f"feature_mode={as_string(values.get('feature_mode'))} "
+        f"settings.default_mode={as_string(settings.get('default_mode'))} "
+        f"settings.api_key_configured={bool(as_string(settings.get('api_key')))}",
         file=sys.stderr,
     )
 
