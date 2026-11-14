@@ -41,6 +41,10 @@ owning page and the action is the modal context.
 Sub-resource modals use the owning entity's action. For example, a session view
 or edit modal uses `course.view` / `course.edit`.
 
+`yogis` and `members` are internal auth views over contacts and are not
+extension targets. Auth sessions, API tokens and other credential data are not
+exposed to extensions.
+
 Wildcards are supported:
 
 ```json
@@ -73,6 +77,8 @@ Special events:
 | `list.member.add` | contacts are added to a list |
 | `list.member.remove` | contacts are removed from a list |
 | `form.submit` | a public form is submitted |
+
+The `yogis` and `members` auth pages do not emit extension events.
 
 Wildcards are supported:
 
@@ -344,6 +350,10 @@ Patches are only supported on entity create/update events. They are applied
 after all interested before handlers run, so a later plugin overrides an
 earlier plugin's value for the same field. After/failed handlers receive the
 patched input.
+
+Protected fields are omitted from `Record`. Hidden and readonly fields are
+visible in `Record` but cannot be patched. Protected fields cannot be patched
+either. Attempting to patch any of these returns an error.
 
 ## `shutdown`
 

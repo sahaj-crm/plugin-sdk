@@ -195,8 +195,11 @@ return &extensionapi.EventResponse{
 Keys are Go field names, matching the `Record` payload. Values are decoded into
 the field's Go type. Patches are only supported for entity create/update and
 are applied before the database write. After/failed handlers receive the
-patched input. Plugins are trusted, so any matching exported field can be
-patched.
+patched input.
+
+Protected fields are omitted from `Record`. Hidden and readonly fields are
+visible to plugins but cannot be patched; protected fields cannot be patched
+either.
 
 ### Phases
 
