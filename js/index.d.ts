@@ -1,5 +1,18 @@
 export type Phase = "before" | "after" | "failed";
 
+export interface Setting {
+  key: string;
+  name: string;
+  type: string;
+  mode?: string;
+  placeholder?: string;
+  note?: string;
+  options?: Option[];
+  value?: unknown;
+  required?: boolean;
+  secret?: boolean;
+}
+
 export interface Info {
   id: string;
   name: string;
@@ -7,6 +20,7 @@ export interface Info {
   api_version: number;
   targets?: string[];
   events?: string[];
+  settings?: Setting[];
 }
 
 export interface Option {
@@ -31,6 +45,7 @@ export interface ContributionRequest {
   id?: string;
   record?: unknown;
   values?: Record<string, unknown>;
+  settings?: Record<string, unknown>;
 }
 
 export interface ContributionResponse {
@@ -53,6 +68,7 @@ export interface Event<TInput = unknown, TOutput = unknown> {
   input?: TInput;
   output?: TOutput;
   error?: string;
+  settings?: Record<string, unknown>;
 }
 
 export interface EventResponse {

@@ -80,6 +80,45 @@ The full contract is in [spec/protocol.md](spec/protocol.md).
 See [spec/protocol.md](spec/protocol.md) for the full field, target and event
 reference.
 
+## Settings
+
+Plugins can declare deployment-wide settings in `plugin.json`:
+
+```json
+{
+  "settings": [
+    {
+      "key": "api_key",
+      "name": "API Key",
+      "type": "password",
+      "required": true,
+      "secret": true
+    },
+    {
+      "key": "default_duration",
+      "name": "Default Duration",
+      "type": "number",
+      "value": "60"
+    }
+  ]
+}
+```
+
+Settings are stored by the host, configured by an admin, and passed to the
+plugin on each `contribute` and `handle` call:
+
+```go
+apiKey := req.Settings["api_key"]
+```
+
+```go
+apiKey := ev.Settings["api_key"]
+```
+
+Only the calling extension's settings are included. `secret` settings are
+never returned by the admin API after saving; submitting an empty secret keeps
+the existing value.
+
 ## Using field values in `handle`
 
 For entity create/update events, `event.input` is the serialized operation

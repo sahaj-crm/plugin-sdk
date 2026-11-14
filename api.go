@@ -19,14 +19,15 @@ const (
 
 // Event is a serialized lifecycle event sent to interested extensions.
 type Event struct {
-	Name   string          `json:"name"`   // "course.create"
-	Phase  Phase           `json:"phase"`  // before | after | failed
-	Entity string          `json:"entity"` // "course"
-	Action string          `json:"action"` // "create"
-	ID     string          `json:"id,omitempty"`
-	Input  json.RawMessage `json:"input,omitempty"`
-	Output json.RawMessage `json:"output,omitempty"`
-	Error  string          `json:"error,omitempty"`
+	Name     string          `json:"name"`   // "course.create"
+	Phase    Phase           `json:"phase"`  // before | after | failed
+	Entity   string          `json:"entity"` // "course"
+	Action   string          `json:"action"` // "create"
+	ID       string          `json:"id,omitempty"`
+	Input    json.RawMessage `json:"input,omitempty"`
+	Output   json.RawMessage `json:"output,omitempty"`
+	Error    string          `json:"error,omitempty"`
+	Settings map[string]any  `json:"settings,omitempty"` // this extension's settings
 }
 
 // EventResponse lets a before-handler reject or modify an operation.
@@ -40,12 +41,27 @@ type EventResponse struct {
 
 // Info describes an extension and what it wants to receive.
 type Info struct {
-	ID         string   `json:"id"`
-	Name       string   `json:"name"`
-	Version    string   `json:"version"`
-	APIVersion int      `json:"api_version"`
-	Events     []string `json:"events,omitempty"`  // "course.create", ...
-	Targets    []string `json:"targets,omitempty"` // "course.new", "course.edit", ...
+	ID         string    `json:"id"`
+	Name       string    `json:"name"`
+	Version    string    `json:"version"`
+	APIVersion int       `json:"api_version"`
+	Events     []string  `json:"events,omitempty"`  // "course.create", ...
+	Targets    []string  `json:"targets,omitempty"` // "course.new", "course.edit", ...
+	Settings   []Setting `json:"settings,omitempty"`
+}
+
+// Setting declares one deployment-wide extension setting shown in the admin UI.
+type Setting struct {
+	Key         string   `json:"key"`
+	Name        string   `json:"name"`
+	Type        string   `json:"type"`
+	Mode        string   `json:"mode,omitempty"`
+	Placeholder string   `json:"placeholder,omitempty"`
+	Note        string   `json:"note,omitempty"`
+	Options     []Option `json:"options,omitempty"`
+	Value       any      `json:"value,omitempty"` // default
+	Required    bool     `json:"required,omitempty"`
+	Secret      bool     `json:"secret,omitempty"`
 }
 
 // Common form field types. Type accepts any valid HTML input type; these
@@ -81,11 +97,12 @@ type Field struct {
 
 // ContributionRequest asks an extension for fields for a modal target.
 type ContributionRequest struct {
-	Entity string          `json:"entity"`
-	Action string          `json:"action"` // new | edit | view
-	ID     string          `json:"id,omitempty"`
-	Record json.RawMessage `json:"record,omitempty"`
-	Values map[string]any  `json:"values,omitempty"` // this extension's stored values
+	Entity   string          `json:"entity"`
+	Action   string          `json:"action"` // new | edit | view
+	ID       string          `json:"id,omitempty"`
+	Record   json.RawMessage `json:"record,omitempty"`
+	Values   map[string]any  `json:"values,omitempty"`   // this extension's stored values
+	Settings map[string]any  `json:"settings,omitempty"` // this extension's settings
 }
 
 // ContributionResponse is the declarative UI contribution of an extension.

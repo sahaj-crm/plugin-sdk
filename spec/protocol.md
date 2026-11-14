@@ -86,6 +86,47 @@ Wildcards are supported:
 "events": ["course.*", "list.member.*"]
 ```
 
+## Settings
+
+Plugins can declare deployment-wide settings in the manifest:
+
+```json
+{
+  "settings": [
+    {
+      "key": "api_key",
+      "name": "API Key",
+      "type": "password",
+      "required": true,
+      "secret": true
+    },
+    {
+      "key": "default_duration",
+      "name": "Default Duration",
+      "type": "number",
+      "value": "60"
+    }
+  ]
+}
+```
+
+| Field | Type | Required | Meaning |
+|---|---|---|---|
+| `key` | string | yes | setting key passed to the plugin |
+| `name` | string | yes | admin label |
+| `type` | string | yes | input type; reuses field types |
+| `mode` | string | no | field mode |
+| `placeholder` | string | no | admin placeholder |
+| `note` | string | no | admin helper text |
+| `options` | array | no | choices for `select` |
+| `value` | any | no | default value |
+| `required` | bool | no | save fails when empty |
+| `secret` | bool | no | hide the value from admin responses |
+
+Settings are namespaced by extension. The host passes only the calling
+extension's settings as `settings` in `contribute` and `handle`. A blank secret
+value on save keeps the previous value.
+
 ## Transport rules
 
 - UTF-8 JSON, one object per line.
@@ -121,12 +162,14 @@ Params:
   "action": "new",
   "id": "new",
   "record": {"Name": "New Course"},
-  "values": {"opt_in": true}
+  "values": {"opt_in": true},
+  "settings": {"api_key": "...", "default_duration": "60"}
 }
 ```
 
 `values` contains only this extension's stored data, keyed by the simple field
-`param`. `record` is a snapshot of the entity model.
+`param`. `settings` contains only this extension's settings. `record` is a
+snapshot of the entity model.
 
 Result:
 
@@ -264,7 +307,8 @@ Params:
     }
   },
   "output": null,
-  "error": ""
+  "error": "",
+  "settings": {"api_key": "...", "default_duration": "60"}
 }
 ```
 

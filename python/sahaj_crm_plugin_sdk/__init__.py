@@ -29,6 +29,21 @@ class EventResponse(TypedDict, total=False):
     values: dict[str, Any]
 
 
+class Setting(TypedDict, total=False):
+    """One deployment-wide plugin setting declared in plugin.json."""
+
+    key: str
+    name: str
+    type: str
+    mode: str
+    placeholder: str
+    note: str
+    options: list[dict[str, Any]]
+    value: Any
+    required: bool
+    secret: bool
+
+
 def extension_values(extras: Optional[Extras], extension_id: str) -> dict[str, Any]:
     """Return one extension's values from an event's Extras map."""
     if not extras:
