@@ -39,15 +39,17 @@ type EventResponse struct {
 	Values map[string]any `json:"values,omitempty"` // reserved for extension data
 }
 
-// Info describes an extension and what it wants to receive.
-type Info struct {
-	ID         string    `json:"id"`
-	Name       string    `json:"name"`
-	Version    string    `json:"version"`
-	APIVersion int       `json:"api_version"`
-	Events     []string  `json:"events,omitempty"`  // "course.create", ...
-	Targets    []string  `json:"targets,omitempty"` // "course.new", "course.edit", ...
-	Settings   []Setting `json:"settings,omitempty"`
+// Manifest describes an extension and what it wants to receive.
+type Manifest struct {
+	ID          string    `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description,omitempty"`
+	Version     string    `json:"version"`
+	APIVersion  int       `json:"api_version"`
+	Executable  string    `json:"executable"`
+	Events      []string  `json:"events,omitempty"`  // "course.create", ...
+	Targets     []string  `json:"targets,omitempty"` // "course.new", "course.edit", ...
+	Settings    []Setting `json:"settings,omitempty"`
 }
 
 // Setting declares one deployment-wide extension setting shown in the admin UI.

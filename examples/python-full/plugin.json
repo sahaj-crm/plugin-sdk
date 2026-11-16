@@ -1,11 +1,18 @@
 {
   "id": "com.example.pyfull",
   "name": "Full Python Example",
+  "description": "Full Python extension with checkbox, select, notes, settings and lifecycle logging.",
   "version": "0.1.0",
   "api_version": 1,
   "executable": "plugin",
-  "targets": ["course.new", "course.edit"],
-  "events": ["course.create", "course.update"],
+  "targets": [
+    "course.new",
+    "course.edit"
+  ],
+  "events": [
+    "course.create",
+    "course.update"
+  ],
   "settings": [
     {
       "key": "default_mode",
@@ -13,8 +20,14 @@
       "type": "select",
       "value": "one",
       "options": [
-        { "value": "one", "label": "Mode 1" },
-        { "value": "two", "label": "Mode 2" }
+        {
+          "value": "one",
+          "label": "Mode 1"
+        },
+        {
+          "value": "two",
+          "label": "Mode 2"
+        }
       ],
       "note": "Used when no mode has been saved for the entity."
     },

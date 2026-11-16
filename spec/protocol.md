@@ -9,6 +9,7 @@ The host runs the executable directly; there is no runtime handshake.
 {
   "id": "com.example.optin",
   "name": "Example Opt-in",
+  "description": "Adds a sample opt-in checkbox to course forms.",
   "version": "0.1.0",
   "api_version": 1,
   "executable": "plugin",
@@ -17,8 +18,9 @@ The host runs the executable directly; there is no runtime handshake.
 }
 ```
 
-`targets` and `events` support exact names and a trailing `*` wildcard.
-`api_version` is validated by the host before the plugin is loaded.
+`description` is optional free text shown in admin plugin listings. `targets`
+and `events` support exact names and a trailing `*` wildcard. `api_version` is
+validated by the host before the plugin is loaded.
 
 ## Targets
 

@@ -16,13 +16,13 @@ in Go, JavaScript, Python, Rust, or anything else.
 
 ## Manifest
 
-The manifest is authoritative for plugin metadata. There is no runtime `info`
-handshake.
+The manifest is authoritative for plugin metadata.
 
 ```json
 {
   "id": "com.example.optin",
   "name": "Example Opt-in",
+  "description": "Adds a sample opt-in checkbox to course forms.",
   "version": "0.1.0",
   "api_version": 1,
   "executable": "plugin",
@@ -39,7 +39,7 @@ tries `<executable>.exe` when the exact file is missing.
 One JSON object per line over stdin/stdout:
 
 ```json
-{"jsonrpc":"2.0","id":1,"method":"contribute","params":{}}
+{ "jsonrpc": "2.0", "id": 1, "method": "contribute", "params": {} }
 ```
 
 Methods:
@@ -56,12 +56,14 @@ The full contract is in [spec/protocol.md](spec/protocol.md).
 
 ```json
 {
-  "fields": [{
-    "name": "Enable the example feature",
-    "param": "opt_in",
-    "type": "checkbox",
-    "note": "Stored under the extension's own data."
-  }]
+  "fields": [
+    {
+      "name": "Enable the example feature",
+      "param": "opt_in",
+      "type": "checkbox",
+      "note": "Stored under the extension's own data."
+    }
+  ]
 }
 ```
 
@@ -259,11 +261,11 @@ Delete `output` is `{"ID": <id>}`.
 The SDK is an authoring tool; the installed artifact is always a native
 executable.
 
-| Language | Package | Build |
-|---|---|---|
-| Go | `github.com/sahaj-crm/plugin-sdk` | `go build` |
-| JavaScript | `@sahaj-crm/plugin-sdk` | `bun build --compile` |
-| Python | `sahaj-crm-plugin-sdk` | PyInstaller |
+| Language   | Package                           | Build                 |
+| ---------- | --------------------------------- | --------------------- |
+| Go         | `github.com/sahaj-crm/plugin-sdk` | `go build`            |
+| JavaScript | `@sahaj-crm/plugin-sdk`           | `bun build --compile` |
+| Python     | `sahaj-crm-plugin-sdk`            | PyInstaller           |
 
 ## Go
 

@@ -13,11 +13,13 @@ export interface Setting {
   secret?: boolean;
 }
 
-export interface Info {
+export interface Manifest {
   id: string;
   name: string;
+  description?: string;
   version: string;
   api_version: number;
+  executable: string;
   targets?: string[];
   events?: string[];
   settings?: Setting[];
