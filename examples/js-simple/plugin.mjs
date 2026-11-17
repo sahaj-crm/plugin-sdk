@@ -6,7 +6,7 @@ serve({
   contribute: () => ({
     fields: [{
       name: "Enable the simple JavaScript feature",
-      param: "enabled",
+      key: "enabled",
       type: "checkbox",
       note: "Minimal example with one checkbox.",
     }],

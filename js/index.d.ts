@@ -9,7 +9,6 @@ export interface Setting {
   note?: string;
   options?: Option[];
   value?: unknown;
-  required?: boolean;
   secret?: boolean;
 }
 
@@ -30,17 +29,6 @@ export interface Option {
   label: string;
 }
 
-export interface Field {
-  name?: string;
-  param: string;
-  value?: unknown;
-  type: "checkbox" | "checkboxes" | "text" | "textarea" | "select" | "number";
-  mode?: string;
-  placeholder?: string;
-  note?: string;
-  options?: Option[];
-}
-
 export interface ContributionRequest {
   entity: string;
   action: string;
@@ -51,7 +39,7 @@ export interface ContributionRequest {
 }
 
 export interface ContributionResponse {
-  fields: Field[];
+  fields: Setting[];
 }
 
 export type Extras = Record<string, Record<string, unknown>>;

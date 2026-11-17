@@ -52,17 +52,18 @@ type Manifest struct {
 	Settings    []Setting `json:"settings,omitempty"`
 }
 
-// Setting declares one deployment-wide extension setting shown in the admin UI.
+// Setting describes one field. The same shape is used for deployment-wide
+// settings and for entity-contributed fields. Secret is only meaningful for
+// manifest settings.
 type Setting struct {
-	Key         string   `json:"key"`
 	Name        string   `json:"name"`
+	Key         string   `json:"key"`
+	Value       any      `json:"value,omitempty"` // default or initial value
 	Type        string   `json:"type"`
 	Mode        string   `json:"mode,omitempty"`
 	Placeholder string   `json:"placeholder,omitempty"`
 	Note        string   `json:"note,omitempty"`
 	Options     []Option `json:"options,omitempty"`
-	Value       any      `json:"value,omitempty"` // default
-	Required    bool     `json:"required,omitempty"`
 	Secret      bool     `json:"secret,omitempty"`
 }
 
@@ -83,20 +84,6 @@ type Option struct {
 	Label string `json:"label"`
 }
 
-// Field mirrors the host's StructField so it can be rendered by the same form
-// template. Param is the field key; the host namespaces it as
-// "ext[<extension>][<param>]" before rendering.
-type Field struct {
-	Name        string   `json:"name,omitempty"`
-	Param       string   `json:"param"`
-	Value       any      `json:"value,omitempty"`
-	Type        string   `json:"type"`
-	Mode        string   `json:"mode,omitempty"`
-	Placeholder string   `json:"placeholder,omitempty"`
-	Note        string   `json:"note,omitempty"`
-	Options     []Option `json:"options,omitempty"`
-}
-
 // ContributionRequest asks an extension for fields for a modal target.
 type ContributionRequest struct {
 	Entity   string          `json:"entity"`
@@ -109,7 +96,7 @@ type ContributionRequest struct {
 
 // ContributionResponse is the declarative UI contribution of an extension.
 type ContributionResponse struct {
-	Fields []Field `json:"fields"`
+	Fields []Setting `json:"fields"`
 }
 
 // Extension is the behavior implemented by a plugin. Its metadata lives in

@@ -20,11 +20,11 @@ func (Extension) Contribute(
 	_ *extensionapi.ContributionRequest,
 ) (*extensionapi.ContributionResponse, error) {
 	return &extensionapi.ContributionResponse{
-		Fields: []extensionapi.Field{{
-			Name:  "Enable the simple Go feature",
-			Param: "enabled",
-			Type:  extensionapi.FieldCheckbox,
-			Note:  "Minimal example with one checkbox.",
+		Fields: []extensionapi.Setting{{
+			Name: "Enable the simple Go feature",
+			Key:  "enabled",
+			Type: extensionapi.FieldCheckbox,
+			Note: "Minimal example with one checkbox.",
 		}},
 	}, nil
 }

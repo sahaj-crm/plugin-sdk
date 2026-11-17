@@ -20,12 +20,12 @@ def contribute(request):
     return {
         "fields": [{
             "name": "Enable the full Python feature",
-            "param": "feature_enabled",
+            "key": "feature_enabled",
             "type": "checkbox",
             "note": "Stored under the extension's own data.",
         }, {
             "name": "Full Python mode",
-            "param": "feature_mode",
+            "key": "feature_mode",
             "type": "select",
             "value": default_mode,
             "note": "Defaults from the extension setting.",

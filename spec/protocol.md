@@ -99,7 +99,7 @@ Plugins can declare deployment-wide settings in the manifest:
       "key": "api_key",
       "name": "API Key",
       "type": "password",
-      "required": true,
+      "mode": "required",
       "secret": true
     },
     {
@@ -112,18 +112,8 @@ Plugins can declare deployment-wide settings in the manifest:
 }
 ```
 
-| Field | Type | Required | Meaning |
-|---|---|---|---|
-| `key` | string | yes | setting key passed to the plugin |
-| `name` | string | yes | admin label |
-| `type` | string | yes | input type; reuses field types |
-| `mode` | string | no | field mode |
-| `placeholder` | string | no | admin placeholder |
-| `note` | string | no | admin helper text |
-| `options` | array | no | choices for `select` |
-| `value` | any | no | default value |
-| `required` | bool | no | save fails when empty |
-| `secret` | bool | no | hide the value from admin responses |
+Manifest settings use the same `Setting` object described below. `secret` is
+only meaningful for manifest settings.
 
 Settings are namespaced by extension. The host passes only the calling
 extension's settings as `settings` in `contribute` and `handle`. A blank secret
@@ -170,7 +160,7 @@ Params:
 ```
 
 `values` contains only this extension's stored data, keyed by the simple field
-`param`. `settings` contains only this extension's settings. `record` is a
+`key`. `settings` contains only this extension's settings. `record` is a
 snapshot of the entity model.
 
 Result:
@@ -179,7 +169,7 @@ Result:
 {
   "fields": [{
     "name": "Enable the example feature",
-    "param": "opt_in",
+    "key": "opt_in",
     "type": "checkbox",
     "value": true,
     "mode": "",
@@ -190,25 +180,26 @@ Result:
 }
 ```
 
-`param` is the extension-local field key. The host namespaces it to
-`ext[<extension>][<param>]` before rendering and stores the value under the
+`key` is the extension-local field key. The host namespaces it to
+`ext[<extension>][<key>]` before rendering and stores the value under the
 simple key in the extension's own data row. The host overlays stored `values`
-by `param`.
+by `key`.
 
-## Fields
+## Setting object
 
-Every field object has this shape:
+Deployment settings and contributed entity fields share this object:
 
-| Field | Type | Required | Meaning |
+| Property | Type | Required | Meaning |
 |---|---|---|---|
-| `name` | string | no | label shown in the form |
-| `param` | string | yes | extension-local key; host namespaces it |
-| `value` | any | no | initial or stored value |
+| `name` | string | yes | label shown in the form or admin UI |
+| `key` | string | yes | setting/field key; host namespaces entity fields |
+| `value` | any | no | default or initial value |
 | `type` | string | yes | field/input type |
-| `mode` | string | no | render/validation mode |
+| `mode` | string | no | render/validation mode; `required` marks required |
 | `placeholder` | string | no | input placeholder |
 | `note` | string | no | helper text under the input |
 | `options` | array | no | choices for `select` / `checkboxes` |
+| `secret` | bool | no | hide admin value; only meaningful for manifest settings |
 
 ### Special field types
 
@@ -341,14 +332,14 @@ For entity **create** and **update**, it is:
   "Record": { "...": "entity fields..." },
   "Extras": {
     "<extension id>": {
-      "<field param>": "value"
+      "<field key>": "value"
     }
   }
 }
 ```
 
 `Extras` contains every extension field submitted with this operation, grouped
-by extension ID, then by the field's simple `param`.
+by extension ID, then by the field's simple `key`.
 
 - Web forms submit strings. A checkbox is `"true"` or `"false"`; multi-value
   fields are arrays of strings.

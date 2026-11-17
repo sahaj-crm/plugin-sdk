@@ -14,12 +14,12 @@ serve({
     return {
       fields: [{
         name: "Enable the full JavaScript feature",
-        param: "feature_enabled",
+        key: "feature_enabled",
         type: "checkbox",
         note: "Stored under the extension's own data.",
       }, {
         name: "Full JavaScript mode",
-        param: "feature_mode",
+        key: "feature_mode",
         type: "select",
         value: defaultMode,
         note: "Defaults from the extension setting.",

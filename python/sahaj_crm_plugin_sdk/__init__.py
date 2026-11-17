@@ -30,7 +30,7 @@ class EventResponse(TypedDict, total=False):
 
 
 class Setting(TypedDict, total=False):
-    """One deployment-wide plugin setting declared in plugin.json."""
+    """A deployment setting or a contributed entity field."""
 
     key: str
     name: str
@@ -40,7 +40,6 @@ class Setting(TypedDict, total=False):
     note: str
     options: list[dict[str, Any]]
     value: Any
-    required: bool
     secret: bool
 
 

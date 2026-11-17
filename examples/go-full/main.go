@@ -27,14 +27,14 @@ func (Extension) Contribute(
 		defaultMode = "one"
 	}
 	return &extAPI.ContributionResponse{
-		Fields: []extAPI.Field{{
-			Name:  "Enable the full Go feature",
-			Param: "feature_enabled",
-			Type:  extAPI.FieldCheckbox,
-			Note:  "Note about this checkbox",
+		Fields: []extAPI.Setting{{
+			Name: "Enable the full Go feature",
+			Key:  "feature_enabled",
+			Type: extAPI.FieldCheckbox,
+			Note: "Note about this checkbox",
 		}, {
 			Name:  "Full Go mode",
-			Param: "feature_mode",
+			Key:   "feature_mode",
 			Type:  extAPI.FieldSelect,
 			Value: defaultMode,
 			Note:  "Defaults from the extension setting.",

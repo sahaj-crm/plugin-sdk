@@ -12,7 +12,7 @@ def contribute(_request):
     return {
         "fields": [{
             "name": "Enable the simple Python feature",
-            "param": "enabled",
+            "key": "enabled",
             "type": "checkbox",
             "note": "Minimal example with one checkbox.",
         }],

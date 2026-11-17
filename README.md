@@ -52,14 +52,15 @@ The full contract is in [spec/protocol.md](spec/protocol.md).
 
 ## Fields
 
-`contribute` returns a flat list of fields:
+`contribute` returns a flat list of `Setting` objects. The same shape is used
+for deployment settings:
 
 ```json
 {
   "fields": [
     {
       "name": "Enable the example feature",
-      "param": "opt_in",
+      "key": "opt_in",
       "type": "checkbox",
       "note": "Stored under the extension's own data."
     }
@@ -67,8 +68,8 @@ The full contract is in [spec/protocol.md](spec/protocol.md).
 }
 ```
 
-- `param` is the extension-local field key. The host namespaces it to
-  `ext[<extension>][<param>]` for the form and stores the value under the
+- `key` is the extension-local field key. The host namespaces it to
+  `ext[<extension>][<key>]` for the form and stores the value under the
   simple key in `extension_data`.
 - `note` renders as help text below the field.
 - Special types: `textarea`, `select`, `checkbox`, `checkboxes`, `date`,
@@ -93,7 +94,7 @@ Plugins can declare deployment-wide settings in `plugin.json`:
       "key": "api_key",
       "name": "API Key",
       "type": "password",
-      "required": true,
+      "mode": "required",
       "secret": true
     },
     {
@@ -141,7 +142,7 @@ input:
 }
 ```
 
-`Extras` is namespaced by extension ID and then by the **simple field param**.
+`Extras` is namespaced by extension ID and then by the **simple field key**.
 Read only your own extension's entry.
 
 Types:
@@ -280,7 +281,7 @@ import (
 type Extension struct{}
 
 func (Extension) Contribute(context.Context, *extensionapi.ContributionRequest) (*extensionapi.ContributionResponse, error) {
-    return &extensionapi.ContributionResponse{Fields: []extensionapi.Field{...}}, nil
+    return &extensionapi.ContributionResponse{Fields: []extensionapi.Setting{...}}, nil
 }
 
 func (Extension) Handle(context.Context, *extensionapi.Event) (*extensionapi.EventResponse, error) {
