@@ -1,6 +1,6 @@
 # Sahaj CRM Plugin SDK
 
-SDK and protocol for Sahaj CRM extensions.
+SDK and protocol for Sahaj CRM plugins.
 
 A plugin is **one directory containing one native executable and one
 `plugin.json` manifest**:
@@ -44,6 +44,7 @@ One JSON object per line over stdin/stdout:
 
 Methods:
 
+- `handshake` — protocol/readiness check handled by the SDK
 - `contribute` — declarative fields for a modal
 - `handle` — before/after/failed lifecycle events
 - `shutdown` — optional graceful exit
@@ -62,15 +63,15 @@ for deployment settings:
       "name": "Enable the example feature",
       "key": "opt_in",
       "type": "checkbox",
-      "note": "Stored under the extension's own data."
+      "note": "Stored under the plugin's own data."
     }
   ]
 }
 ```
 
-- `key` is the extension-local field key. The host namespaces it to
-  `ext[<extension>][<key>]` for the form and stores the value under the
-  simple key in `extension_data`.
+- `key` is the plugin-local field key. The host namespaces it to
+  `plugin[<plugin>][<key>]` for the form and stores the value under the
+  simple key in `plugin_data`.
 - `note` renders as help text below the field.
 - Special types: `textarea`, `select`, `checkbox`, `checkboxes`, `date`,
   `datetime`, `duration`, `route`.
@@ -118,7 +119,7 @@ apiKey := req.Settings["api_key"]
 apiKey := ev.Settings["api_key"]
 ```
 
-Only the calling extension's settings are included. `secret` settings are
+Only the calling plugin's settings are included. `secret` settings are
 never returned by the admin API after saving; submitting an empty secret keeps
 the existing value.
 
@@ -142,8 +143,8 @@ input:
 }
 ```
 
-`Extras` is namespaced by extension ID and then by the **simple field key**.
-Read only your own extension's entry.
+`Extras` is namespaced by plugin ID and then by the **simple field key**.
+Read only your own plugin's entry.
 
 Types:
 
@@ -155,39 +156,39 @@ Types:
 ### Go
 
 ```go
-func (Extension) Handle(_ context.Context, ev *extensionapi.Event) (*extensionapi.EventResponse, error) {
-    input, err := extensionapi.DecodeEntityInput[map[string]any](ev)
+func (Plugin) Handle(_ context.Context, ev *pluginapi.Event) (*pluginapi.EventResponse, error) {
+    input, err := pluginapi.DecodeEntityInput[map[string]any](ev)
     if err != nil {
         return nil, err
     }
 
     values := input.Extras.Values("com.example.optin")
-    if ev.Phase == extensionapi.Before && !extensionapi.AsBool(values["opt_in"]) {
-        return &extensionapi.EventResponse{Error: "opt-in is required"}, nil
+    if ev.Phase == pluginapi.Before && !pluginapi.AsBool(values["opt_in"]) {
+        return &pluginapi.EventResponse{Error: "opt-in is required"}, nil
     }
 
-    if ev.Phase == extensionapi.After {
-        output, err := extensionapi.DecodeOutput[map[string]any](ev)
+    if ev.Phase == pluginapi.After {
+        output, err := pluginapi.DecodeOutput[map[string]any](ev)
         if err != nil {
             return nil, err
         }
         log.Printf("saved id: %v", output["ID"])
     }
 
-    return &extensionapi.EventResponse{}, nil
+    return &pluginapi.EventResponse{}, nil
 }
 ```
 
-`extensionapi.AsString` and `extensionapi.AsStrings` normalize single and
+`pluginapi.AsString` and `pluginapi.AsStrings` normalize single and
 multi-value fields.
 
 ### JavaScript
 
 ```js
-import { asBool, extensionValues } from "@sahaj-crm/plugin-sdk";
+import { asBool, pluginValues } from "@sahaj-crm/plugin-sdk";
 
 handle: (event) => {
-  const values = extensionValues(event.input?.Extras, "com.example.optin");
+  const values = pluginValues(event.input?.Extras, "com.example.optin");
   if (event.phase === "before" && !asBool(values.opt_in)) {
     return { error: "opt-in is required" };
   }
@@ -198,10 +199,10 @@ handle: (event) => {
 ### Python
 
 ```python
-from sahaj_crm_plugin_sdk import as_bool, extension_values
+from sahaj_crm_plugin_sdk import as_bool, plugin_values
 
 def handle(event):
-    values = extension_values(
+    values = plugin_values(
         event.get("input", {}).get("Extras"),
         "com.example.optin",
     )
@@ -226,7 +227,7 @@ A `before` handler can populate entity fields by returning `patch`:
 Go:
 
 ```go
-return &extensionapi.EventResponse{
+return &pluginapi.EventResponse{
     Patch: map[string]any{
         "MeetingLink": "https://zoom.us/j/123456789",
         "MeetingID":   "123456789",
@@ -275,21 +276,21 @@ package main
 
 import (
     "context"
-    extensionapi "github.com/sahaj-crm/plugin-sdk"
+    pluginapi "github.com/sahaj-crm/plugin-sdk"
 )
 
-type Extension struct{}
+type Plugin struct{}
 
-func (Extension) Contribute(context.Context, *extensionapi.ContributionRequest) (*extensionapi.ContributionResponse, error) {
-    return &extensionapi.ContributionResponse{Fields: []extensionapi.Setting{...}}, nil
+func (Plugin) Contribute(context.Context, *pluginapi.ContributionRequest) (*pluginapi.ContributionResponse, error) {
+    return &pluginapi.ContributionResponse{Fields: []pluginapi.Setting{...}}, nil
 }
 
-func (Extension) Handle(context.Context, *extensionapi.Event) (*extensionapi.EventResponse, error) {
-    return &extensionapi.EventResponse{}, nil
+func (Plugin) Handle(context.Context, *pluginapi.Event) (*pluginapi.EventResponse, error) {
+    return &pluginapi.EventResponse{}, nil
 }
 
 func main() {
-    extensionapi.Serve(Extension{})
+    pluginapi.Serve(Plugin{})
 }
 ```
 

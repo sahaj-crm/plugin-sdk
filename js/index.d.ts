@@ -67,18 +67,18 @@ export interface EventResponse {
   values?: Record<string, unknown>;
 }
 
-export interface Extension {
+export interface Plugin {
   contribute: (
     req: ContributionRequest,
   ) => ContributionResponse | Promise<ContributionResponse>;
   handle: (event: Event) => EventResponse | Promise<EventResponse>;
 }
 
-export function serve(extension: Extension): void;
+export function serve(plugin: Plugin): void;
 
-export function extensionValues(
+export function pluginValues(
   extras: Extras | undefined,
-  extensionId: string,
+  pluginId: string,
 ): Record<string, unknown>;
 
 export function asBool(value: unknown): boolean;

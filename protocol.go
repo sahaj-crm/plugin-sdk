@@ -1,6 +1,6 @@
 // Minimal JSON-RPC wire types shared by the host and the reference stdio
 // server. External SDKs implement the same one-object-per-line protocol.
-package extensionapi
+package pluginapi
 
 import "encoding/json"
 

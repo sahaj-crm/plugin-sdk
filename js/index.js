@@ -1,19 +1,19 @@
 import { createInterface } from "node:readline";
 
 /**
- * Run an extension over the NDJSON JSON-RPC protocol.
+ * Run an plugin over the NDJSON JSON-RPC protocol.
  *
  * @param {{
  *   contribute: (req: object) => object | Promise<object>,
  *   handle: (event: object) => object | Promise<object>,
- * }} extension
+ * }} plugin
  */
-export function serve(extension) {
+export function serve(plugin) {
   const rl = createInterface({ input: process.stdin, crlfDelay: Infinity });
   let queue = Promise.resolve();
 
   rl.on("line", (line) => {
-    queue = queue.then(() => handleLine(extension, line));
+    queue = queue.then(() => handleLine(plugin, line));
   });
 
   rl.on("close", () => {
@@ -21,7 +21,7 @@ export function serve(extension) {
   });
 }
 
-async function handleLine(extension, line) {
+async function handleLine(plugin, line) {
   if (!line.trim()) {
     return;
   }
@@ -38,10 +38,10 @@ async function handleLine(extension, line) {
     let result;
     switch (request.method) {
       case "contribute":
-        result = await extension.contribute(request.params || {});
+        result = await plugin.contribute(request.params || {});
         break;
       case "handle":
-        result = await extension.handle(request.params || {});
+        result = await plugin.handle(request.params || {});
         break;
       case "shutdown":
         reply(request.id, { ok: true });
@@ -57,9 +57,9 @@ async function handleLine(extension, line) {
   }
 }
 
-/** Return one extension's values from an event's Extras map. */
-export function extensionValues(extras, extensionId) {
-  return (extras && extras[extensionId]) || {};
+/** Return one plugin's values from an event's Extras map. */
+export function pluginValues(extras, pluginId) {
+  return (extras && extras[pluginId]) || {};
 }
 
 /** Normalize form/API boolean values. */

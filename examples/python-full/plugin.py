@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Example Python extension. Build it as a native executable with PyInstaller;
+"""Example Python plugin. Build it as a native executable with PyInstaller;
 the host only runs the resulting binary."""
 
 import sys
@@ -7,11 +7,11 @@ import sys
 from sahaj_crm_plugin_sdk import (
     as_bool,
     as_string,
-    extension_values,
+    plugin_values,
     serve,
 )
 
-EXTENSION_ID = "com.example.pyfull"
+PLUGIN_ID = "com.example.pyfull"
 
 
 def contribute(request):
@@ -22,13 +22,13 @@ def contribute(request):
             "name": "Enable the full Python feature",
             "key": "feature_enabled",
             "type": "checkbox",
-            "note": "Stored under the extension's own data.",
+            "note": "Stored under the plugin's own data.",
         }, {
             "name": "Full Python mode",
             "key": "feature_mode",
             "type": "select",
             "value": default_mode,
-            "note": "Defaults from the extension setting.",
+            "note": "Defaults from the plugin setting.",
             "options": [
                 {"value": "one", "label": "Mode 1"},
                 {"value": "two", "label": "Mode 2"},
@@ -39,10 +39,10 @@ def contribute(request):
 
 def handle(event):
     input_data = event.get("input") or {}
-    values = extension_values(input_data.get("Extras"), EXTENSION_ID)
+    values = plugin_values(input_data.get("Extras"), PLUGIN_ID)
     settings = event.get("settings") or {}
     print(
-        f"full python extension: {event['phase']} {event['name']} "
+        f"full python plugin: {event['phase']} {event['name']} "
         f"feature_enabled={as_bool(values.get('feature_enabled'))} "
         f"feature_mode={as_string(values.get('feature_mode'))} "
         f"settings.default_mode={as_string(settings.get('default_mode'))} "
@@ -52,7 +52,7 @@ def handle(event):
 
     if event["phase"] == "after":
         output = event.get("output") or {}
-        print(f"full python extension: saved id={output.get('ID')}", file=sys.stderr)
+        print(f"full python plugin: saved id={output.get('ID')}", file=sys.stderr)
 
     return {}
 

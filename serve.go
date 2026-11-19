@@ -1,6 +1,6 @@
-// Reference stdio server for extensions. It implements the same NDJSON
+// Reference stdio server for plugins. It implements the same NDJSON
 // JSON-RPC protocol used by the host and can be copied into a Go plugin SDK.
-package extensionapi
+package pluginapi
 
 import (
 	"bufio"
@@ -11,9 +11,9 @@ import (
 	"os"
 )
 
-// Serve runs an Extension over stdin/stdout until stdin closes or a shutdown
+// Serve runs an Plugin over stdin/stdout until stdin closes or a shutdown
 // request arrives. stdout is reserved for protocol messages; logs go to stderr.
-func Serve(ext Extension) {
+func Serve(plugin Plugin) {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Buffer(make([]byte, 64*1024), 16*1024*1024)
 	out := json.NewEncoder(os.Stdout)
@@ -30,13 +30,13 @@ func Serve(ext Extension) {
 				JSONRPC: JSONRPCVersion,
 				Error:   &RPCError{Code: -32700, Message: "invalid JSON: " + err.Error()},
 			}); err != nil {
-				log.Printf("ERROR [extension serve]: %v", err)
+				log.Printf("ERROR [plugin serve]: %v", err)
 				return
 			}
 			continue
 		}
 
-		result, rpcErr := dispatch(ext, req)
+		result, rpcErr := dispatch(plugin, req)
 		resp := Response{JSONRPC: JSONRPCVersion, ID: req.ID, Error: rpcErr}
 		if rpcErr == nil {
 			data, err := json.Marshal(result)
@@ -47,7 +47,7 @@ func Serve(ext Extension) {
 			}
 		}
 		if err := out.Encode(resp); err != nil {
-			log.Printf("ERROR [extension serve]: %v", err)
+			log.Printf("ERROR [plugin serve]: %v", err)
 			return
 		}
 		if req.Method == "shutdown" {
@@ -56,19 +56,24 @@ func Serve(ext Extension) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		log.Printf("ERROR [extension serve]: %v", err)
+		log.Printf("ERROR [plugin serve]: %v", err)
 	}
 }
 
-func dispatch(ext Extension, req Request) (any, *RPCError) {
+func dispatch(plugin Plugin, req Request) (any, *RPCError) {
 	ctx := context.Background()
 	switch req.Method {
+	case "handshake":
+		return HandshakeResponse{
+			Protocol:   ProtocolVersion,
+			SDKVersion: "plugin-sdk/1",
+		}, nil
 	case "contribute":
 		var in ContributionRequest
 		if err := json.Unmarshal(req.Params, &in); err != nil {
 			return nil, &RPCError{Code: -32602, Message: fmt.Sprintf("invalid contribute params: %v", err)}
 		}
-		out, err := ext.Contribute(ctx, &in)
+		out, err := plugin.Contribute(ctx, &in)
 		if err != nil {
 			return nil, &RPCError{Code: -32000, Message: err.Error()}
 		}
@@ -78,7 +83,7 @@ func dispatch(ext Extension, req Request) (any, *RPCError) {
 		if err := json.Unmarshal(req.Params, &in); err != nil {
 			return nil, &RPCError{Code: -32602, Message: fmt.Sprintf("invalid handle params: %v", err)}
 		}
-		out, err := ext.Handle(ctx, &in)
+		out, err := plugin.Handle(ctx, &in)
 		if err != nil {
 			return nil, &RPCError{Code: -32000, Message: err.Error()}
 		}

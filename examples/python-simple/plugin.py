@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Minimal Python extension: one checkbox and a Handle logger."""
+"""Minimal Python plugin: one checkbox and a Handle logger."""
 
 import sys
 
-from sahaj_crm_plugin_sdk import as_bool, extension_values, serve
+from sahaj_crm_plugin_sdk import as_bool, plugin_values, serve
 
-EXTENSION_ID = "com.example.pysimple"
+PLUGIN_ID = "com.example.pysimple"
 
 
 def contribute(_request):
@@ -21,9 +21,9 @@ def contribute(_request):
 
 def handle(event):
     input_data = event.get("input") or {}
-    values = extension_values(input_data.get("Extras"), EXTENSION_ID)
+    values = plugin_values(input_data.get("Extras"), PLUGIN_ID)
     print(
-        f"simple python extension: {event['phase']} {event['name']} "
+        f"simple python plugin: {event['phase']} {event['name']} "
         f"enabled={as_bool(values.get('enabled'))}",
         file=sys.stderr,
     )

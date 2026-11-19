@@ -1,7 +1,7 @@
 """Sahaj CRM plugin SDK.
 
 Plugins are executable processes speaking newline-delimited JSON-RPC over
-stdin/stdout. `serve` implements the loop; extension authors provide `info`,
+stdin/stdout. `serve` implements the loop; plugin authors provide `info`,
 `contribute` and `handle` callables (or an object with those methods).
 """
 
@@ -43,11 +43,11 @@ class Setting(TypedDict, total=False):
     secret: bool
 
 
-def extension_values(extras: Optional[Extras], extension_id: str) -> dict[str, Any]:
-    """Return one extension's values from an event's Extras map."""
+def plugin_values(extras: Optional[Extras], plugin_id: str) -> dict[str, Any]:
+    """Return one plugin's values from an event's Extras map."""
     if not extras:
         return {}
-    return extras.get(extension_id) or {}
+    return extras.get(plugin_id) or {}
 
 
 def as_bool(value: Any) -> bool:
@@ -74,12 +74,12 @@ def as_strings(value: Any) -> list[str]:
 def serve(
     contribute: Optional[Callable[[dict], Any]] = None,
     handle: Optional[Callable[[dict], Any]] = None,
-    extension: Any = None,
+    plugin: Any = None,
 ) -> None:
-    """Run an extension until stdin closes or a shutdown request arrives."""
-    if extension is not None:
-        contribute = contribute or extension.contribute
-        handle = handle or extension.handle
+    """Run an plugin until stdin closes or a shutdown request arrives."""
+    if plugin is not None:
+        contribute = contribute or plugin.contribute
+        handle = handle or plugin.handle
     if contribute is None or handle is None:
         raise ValueError("serve requires contribute and handle callables")
 

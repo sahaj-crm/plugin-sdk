@@ -1,7 +1,7 @@
 {
   "id": "com.example.pysimple",
   "name": "Simple Python Example",
-  "description": "Minimal Python extension with one checkbox.",
+  "description": "Minimal Python plugin with one checkbox.",
   "version": "0.1.0",
   "api_version": 1,
   "executable": "plugin",

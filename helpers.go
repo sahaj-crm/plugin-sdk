@@ -1,5 +1,5 @@
 // Helpers for decoding handle event payloads.
-package extensionapi
+package pluginapi
 
 import (
 	"encoding/json"
@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 
-// Extras is the namespaced extension field data submitted with an operation:
-// extension id -> field param -> value.
+// Extras is the namespaced plugin field data submitted with an operation:
+// plugin id -> field param -> value.
 type Extras map[string]map[string]any
 
 // EntityInput is the input shape for entity create/update events.
@@ -43,12 +43,12 @@ func DecodeOutput[T any](ev *Event) (T, error) {
 	return out, err
 }
 
-// Values returns this extension's field values, or nil when absent.
-func (e Extras) Values(extension string) map[string]any {
+// Values returns this plugin's field values, or nil when absent.
+func (e Extras) Values(plugin string) map[string]any {
 	if e == nil {
 		return nil
 	}
-	return e[extension]
+	return e[plugin]
 }
 
 // AsBool normalizes form/API boolean values.

@@ -1,6 +1,6 @@
-import { asBool, extensionValues, serve } from "../../js/index.js";
+import { asBool, pluginValues, serve } from "../../js/index.js";
 
-const extensionID = "com.example.jssimple";
+const pluginID = "com.example.jssimple";
 
 serve({
   contribute: () => ({
@@ -14,9 +14,9 @@ serve({
 
   handle: (event) => {
     const input = event.input || {};
-    const values = extensionValues(input.Extras, extensionID);
+    const values = pluginValues(input.Extras, pluginID);
     console.error(
-      `simple js extension: ${event.phase} ${event.name} ` +
+      `simple js plugin: ${event.phase} ${event.name} ` +
         `enabled=${asBool(values.enabled)}`,
     );
     return {};

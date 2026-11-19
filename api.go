@@ -1,12 +1,27 @@
-// Package extensionapi is the contract shared by the CRM and extension plugins.
+// Package pluginapi is the contract shared by the CRM and plugin plugins.
 // It deliberately depends only on the standard library so external modules can
 // import it without pulling in internal packages.
-package extensionapi
+package pluginapi
 
 import (
 	"context"
 	"encoding/json"
 )
+
+// ProtocolVersion is the wire protocol spoken by the host and plugins.
+const ProtocolVersion = 1
+
+// HandshakeRequest verifies that a started executable speaks the plugin
+// protocol before the host marks it running.
+type HandshakeRequest struct {
+	Protocol int `json:"protocol"`
+}
+
+// HandshakeResponse is returned by the SDK's built-in handshake handler.
+type HandshakeResponse struct {
+	Protocol   int    `json:"protocol"`
+	SDKVersion string `json:"sdk_version,omitempty"`
+}
 
 // Phase is the point in an operation lifecycle at which an event is emitted.
 type Phase string
@@ -17,7 +32,7 @@ const (
 	Failed Phase = "failed"
 )
 
-// Event is a serialized lifecycle event sent to interested extensions.
+// Event is a serialized lifecycle event sent to interested plugins.
 type Event struct {
 	Name     string          `json:"name"`   // "course.create"
 	Phase    Phase           `json:"phase"`  // before | after | failed
@@ -27,7 +42,7 @@ type Event struct {
 	Input    json.RawMessage `json:"input,omitempty"`
 	Output   json.RawMessage `json:"output,omitempty"`
 	Error    string          `json:"error,omitempty"`
-	Settings map[string]any  `json:"settings,omitempty"` // this extension's settings
+	Settings map[string]any  `json:"settings,omitempty"` // this plugin's settings
 }
 
 // EventResponse lets a before-handler reject or modify an operation.
@@ -36,10 +51,10 @@ type Event struct {
 type EventResponse struct {
 	Error  string         `json:"error,omitempty"`
 	Patch  map[string]any `json:"patch,omitempty"`
-	Values map[string]any `json:"values,omitempty"` // reserved for extension data
+	Values map[string]any `json:"values,omitempty"` // reserved for plugin data
 }
 
-// Manifest describes an extension and what it wants to receive.
+// Manifest describes an plugin and what it wants to receive.
 type Manifest struct {
 	ID          string    `json:"id"`
 	Name        string    `json:"name"`
@@ -84,27 +99,27 @@ type Option struct {
 	Label string `json:"label"`
 }
 
-// ContributionRequest asks an extension for fields for a modal target.
+// ContributionRequest asks an plugin for fields for a modal target.
 type ContributionRequest struct {
 	Entity   string          `json:"entity"`
 	Action   string          `json:"action"` // new | edit | view
 	ID       string          `json:"id,omitempty"`
 	Record   json.RawMessage `json:"record,omitempty"`
-	Values   map[string]any  `json:"values,omitempty"`   // this extension's stored values
-	Settings map[string]any  `json:"settings,omitempty"` // this extension's settings
+	Values   map[string]any  `json:"values,omitempty"`   // this plugin's stored values
+	Settings map[string]any  `json:"settings,omitempty"` // this plugin's settings
 }
 
-// ContributionResponse is the declarative UI contribution of an extension.
+// ContributionResponse is the declarative UI contribution of an plugin.
 type ContributionResponse struct {
 	Fields []Setting `json:"fields"`
 }
 
-// Extension is the behavior implemented by a plugin. Its metadata lives in
+// Plugin is the behavior implemented by a plugin. Its metadata lives in
 // plugin.json, so no runtime handshake is required.
-type Extension interface {
+type Plugin interface {
 	Contribute(context.Context, *ContributionRequest) (*ContributionResponse, error)
 	Handle(context.Context, *Event) (*EventResponse, error)
 }
 
-// APIVersion is the current extension contract version.
+// APIVersion is the current plugin contract version.
 const APIVersion = 1

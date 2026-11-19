@@ -1,7 +1,7 @@
 {
   "id": "com.example.gofull",
   "name": "Full Go Example",
-  "description": "Full Go extension with checkbox, select, notes, settings and lifecycle logging.",
+  "description": "Full Go plugin with checkbox, select, notes, settings and lifecycle logging.",
   "version": "0.1.0",
   "api_version": 1,
   "executable": "plugin",

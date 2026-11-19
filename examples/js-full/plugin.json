@@ -1,7 +1,7 @@
 {
   "id": "com.example.jsfull",
   "name": "Full JavaScript Example",
-  "description": "Full JavaScript extension with checkbox, select, notes, settings and lifecycle logging.",
+  "description": "Full JavaScript plugin with checkbox, select, notes, settings and lifecycle logging.",
   "version": "0.1.0",
   "api_version": 1,
   "executable": "plugin",

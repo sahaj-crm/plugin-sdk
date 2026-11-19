@@ -1,7 +1,7 @@
 {
   "id": "com.example.pyfull",
   "name": "Full Python Example",
-  "description": "Full Python extension with checkbox, select, notes, settings and lifecycle logging.",
+  "description": "Full Python plugin with checkbox, select, notes, settings and lifecycle logging.",
   "version": "0.1.0",
   "api_version": 1,
   "executable": "plugin",

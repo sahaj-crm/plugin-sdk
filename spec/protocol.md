@@ -44,8 +44,8 @@ Sub-resource modals use the owning entity's action. For example, a session view
 or edit modal uses `course.view` / `course.edit`.
 
 `yogis` and `members` are internal auth views over contacts and are not
-extension targets. Auth sessions, API tokens and other credential data are not
-exposed to extensions.
+plugin targets. Auth sessions, API tokens and other credential data are not
+exposed to plugins.
 
 Wildcards are supported:
 
@@ -80,7 +80,7 @@ Special events:
 | `list.member.remove` | contacts are removed from a list |
 | `form.submit` | a public form is submitted |
 
-The `yogis` and `members` auth pages do not emit extension events.
+The `yogis` and `members` auth pages do not emit plugin events.
 
 Wildcards are supported:
 
@@ -115,8 +115,8 @@ Plugins can declare deployment-wide settings in the manifest:
 Manifest settings use the same `Setting` object described below. `secret` is
 only meaningful for manifest settings.
 
-Settings are namespaced by extension. The host passes only the calling
-extension's settings as `settings` in `contribute` and `handle`. A blank secret
+Settings are namespaced by plugin. The host passes only the calling
+plugin's settings as `settings` in `contribute` and `handle`. A blank secret
 value on save keeps the previous value.
 
 ## Transport rules
@@ -127,6 +127,23 @@ value on save keeps the previous value.
 - the plugin process is started once and reused.
 - closing stdin or receiving `shutdown` ends the process.
 - requests use JSON-RPC 2.0-style envelopes.
+
+## Handshake
+
+After starting the executable, the host sends:
+
+```json
+{"jsonrpc":"2.0","id":1,"method":"handshake","params":{"protocol":1}}
+```
+
+The SDK responds automatically:
+
+```json
+{"jsonrpc":"2.0","id":1,"result":{"protocol":1,"sdk_version":"plugin-sdk/1"}}
+```
+
+A plugin is not marked running until this succeeds. A process that does not
+answer, exits, or reports a different protocol version fails the handshake.
 
 ## Request
 
@@ -159,8 +176,8 @@ Params:
 }
 ```
 
-`values` contains only this extension's stored data, keyed by the simple field
-`key`. `settings` contains only this extension's settings. `record` is a
+`values` contains only this plugin's stored data, keyed by the simple field
+`key`. `settings` contains only this plugin's settings. `record` is a
 snapshot of the entity model.
 
 Result:
@@ -174,15 +191,15 @@ Result:
     "value": true,
     "mode": "",
     "placeholder": "",
-    "note": "Stored under the extension's own data.",
+    "note": "Stored under the plugin's own data.",
     "options": []
   }]
 }
 ```
 
-`key` is the extension-local field key. The host namespaces it to
-`ext[<extension>][<key>]` before rendering and stores the value under the
-simple key in the extension's own data row. The host overlays stored `values`
+`key` is the plugin-local field key. The host namespaces it to
+`plugin[<plugin>][<key>]` before rendering and stores the value under the
+simple key in the plugin's own data row. The host overlays stored `values`
 by `key`.
 
 ## Setting object
@@ -238,7 +255,7 @@ Examples:
 - `range`
 
 `file` is not supported because the host does not process multipart file
-uploads for extension fields.
+uploads for plugin fields.
 
 ### Options
 
@@ -273,7 +290,7 @@ not recommended.
 - `checkboxes` stores a string for one selection and an array for multiple.
 - `duration` stores the two input values as an array.
 - API clients may send JSON booleans, numbers, strings, or arrays.
-- Stored extension values overwrite the field's `value` when the modal opens.
+- Stored plugin values overwrite the field's `value` when the modal opens.
 
 ## `handle`
 
@@ -331,15 +348,15 @@ For entity **create** and **update**, it is:
 {
   "Record": { "...": "entity fields..." },
   "Extras": {
-    "<extension id>": {
+    "<plugin id>": {
       "<field key>": "value"
     }
   }
 }
 ```
 
-`Extras` contains every extension field submitted with this operation, grouped
-by extension ID, then by the field's simple `key`.
+`Extras` contains every plugin field submitted with this operation, grouped
+by plugin ID, then by the field's simple `key`.
 
 - Web forms submit strings. A checkbox is `"true"` or `"false"`; multi-value
   fields are arrays of strings.

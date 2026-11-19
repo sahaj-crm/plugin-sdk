@@ -1,4 +1,4 @@
-package extensionapi
+package pluginapi
 
 import "testing"
 

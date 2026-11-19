@@ -1,7 +1,7 @@
 {
   "id": "com.example.gosimple",
   "name": "Simple Go Example",
-  "description": "Minimal Go extension with one checkbox.",
+  "description": "Minimal Go plugin with one checkbox.",
   "version": "0.1.0",
   "api_version": 1,
   "executable": "plugin",

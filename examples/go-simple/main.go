@@ -1,4 +1,4 @@
-// Minimal Go extension example: one checkbox and a Handle logger.
+// Minimal Go plugin example: one checkbox and a Handle logger.
 //
 //	mkdir -p plugins/go-simple
 //	go build -o plugins/go-simple/plugin ./examples/go-simple
@@ -8,45 +8,45 @@ import (
 	"context"
 	"log"
 
-	extensionapi "github.com/sahaj-crm/plugin-sdk"
+	pluginapi "github.com/sahaj-crm/plugin-sdk"
 )
 
-const extensionID = "com.example.gosimple"
+const pluginID = "com.example.gosimple"
 
-type Extension struct{}
+type Plugin struct{}
 
-func (Extension) Contribute(
+func (Plugin) Contribute(
 	_ context.Context,
-	_ *extensionapi.ContributionRequest,
-) (*extensionapi.ContributionResponse, error) {
-	return &extensionapi.ContributionResponse{
-		Fields: []extensionapi.Setting{{
+	_ *pluginapi.ContributionRequest,
+) (*pluginapi.ContributionResponse, error) {
+	return &pluginapi.ContributionResponse{
+		Fields: []pluginapi.Setting{{
 			Name: "Enable the simple Go feature",
 			Key:  "enabled",
-			Type: extensionapi.FieldCheckbox,
+			Type: pluginapi.FieldCheckbox,
 			Note: "Minimal example with one checkbox.",
 		}},
 	}, nil
 }
 
-func (Extension) Handle(
+func (Plugin) Handle(
 	_ context.Context,
-	ev *extensionapi.Event,
-) (*extensionapi.EventResponse, error) {
-	input, err := extensionapi.DecodeEntityInput[map[string]any](ev)
+	ev *pluginapi.Event,
+) (*pluginapi.EventResponse, error) {
+	input, err := pluginapi.DecodeEntityInput[map[string]any](ev)
 	if err != nil {
 		return nil, err
 	}
-	values := input.Extras.Values(extensionID)
+	values := input.Extras.Values(pluginID)
 	log.Printf(
-		"simple go extension: %s %s enabled=%v",
+		"simple go plugin: %s %s enabled=%v",
 		ev.Phase,
 		ev.Name,
-		extensionapi.AsBool(values["enabled"]),
+		pluginapi.AsBool(values["enabled"]),
 	)
-	return &extensionapi.EventResponse{}, nil
+	return &pluginapi.EventResponse{}, nil
 }
 
 func main() {
-	extensionapi.Serve(Extension{})
+	pluginapi.Serve(Plugin{})
 }
