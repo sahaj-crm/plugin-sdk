@@ -1,5 +1,7 @@
 import { createInterface } from "node:readline";
 
+export const PROTOCOL_VERSION = 1;
+
 /**
  * Run an plugin over the NDJSON JSON-RPC protocol.
  *
@@ -37,6 +39,12 @@ async function handleLine(plugin, line) {
   try {
     let result;
     switch (request.method) {
+      case "handshake":
+        result = {
+          protocol: PROTOCOL_VERSION,
+          sdk_version: "plugin-sdk-js/1",
+        };
+        break;
       case "contribute":
         result = await plugin.contribute(request.params || {});
         break;

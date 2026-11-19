@@ -1,8 +1,8 @@
 """Sahaj CRM plugin SDK.
 
 Plugins are executable processes speaking newline-delimited JSON-RPC over
-stdin/stdout. `serve` implements the loop; plugin authors provide `info`,
-`contribute` and `handle` callables (or an object with those methods).
+stdin/stdout. `serve` implements the loop; plugin authors provide `contribute`
+and `handle` callables (or an object with those methods).
 """
 
 import json
@@ -10,6 +10,7 @@ import sys
 from typing import Any, Callable, Optional, TypedDict
 
 JSONRPC_VERSION = "2.0"
+PROTOCOL_VERSION = 1
 
 Extras = dict[str, dict[str, Any]]
 
@@ -97,7 +98,12 @@ def serve(
         params = request.get("params") or {}
 
         try:
-            if method == "contribute":
+            if method == "handshake":
+                result = {
+                    "protocol": PROTOCOL_VERSION,
+                    "sdk_version": "plugin-sdk-python/1",
+                }
+            elif method == "contribute":
                 result = contribute(params)
             elif method == "handle":
                 result = handle(params)

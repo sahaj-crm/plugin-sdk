@@ -1,3 +1,5 @@
+export const PROTOCOL_VERSION: number;
+
 export type Phase = "before" | "after" | "failed";
 
 export interface Setting {
