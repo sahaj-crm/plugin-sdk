@@ -361,6 +361,36 @@ Requirements:
 The script builds each example into a native executable and copies the
 manifest. No runtime or SDK files are installed into the plugins directory.
 
+### Prebuilt examples
+
+CI builds the same six archives on every push to `main` and on every `v*` tag,
+so they can be installed straight from a URL without a local toolchain.
+
+Rolling builds from `main` (always the newest code):
+
+```text
+https://github.com/sahaj-crm/plugin-sdk/releases/download/examples-latest/<example>_<platform>.zip
+```
+
+Pinned releases use the usual latest-release URL:
+
+```text
+https://github.com/sahaj-crm/plugin-sdk/releases/latest/download/<example>_<platform>.zip
+```
+
+Examples:
+
+```text
+go-simple_darwin_arm64.zip
+js-full_linux_amd64.zip
+python-simple_darwin_arm64.zip
+```
+
+Platforms are `darwin_arm64` and `linux_amd64`. Each archive contains
+`plugin.json` and the executable at its root, which is the layout the CRM
+installer expects. PyInstaller cannot cross-compile, so every platform is built
+on its own runner; add a matrix entry to cover more.
+
 ## Streaming and concurrency
 
 The current protocol is request/response and the host serializes calls. One
