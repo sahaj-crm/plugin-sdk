@@ -372,6 +372,9 @@ Rolling builds from `main` (always the newest code):
 https://github.com/sahaj-crm/plugin-sdk/releases/download/examples-latest/<example>_<platform>.zip
 ```
 
+The release description lists every URL, one per line, so it can be pasted
+straight into the CRM plugin installer to install all six at once.
+
 Pinned releases use the usual latest-release URL:
 
 ```text

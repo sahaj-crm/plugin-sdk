@@ -113,20 +113,32 @@ jobs:
           set -eu
           if [ "$GITHUB_REF_TYPE" = "tag" ]; then
             tag="$GITHUB_REF_NAME"
-            if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-              gh release upload "$tag" dist/*.zip --clobber --repo "$GITHUB_REPOSITORY"
-            else
-              gh release create "$tag" dist/*.zip \
-                --generate-notes --repo "$GITHUB_REPOSITORY"
-            fi
           else
-            if ! gh release view examples-latest --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-              gh release create examples-latest \
-                --prerelease \
-                --title "Example builds" \
-                --notes "Rolling builds of the example plugins from main." \
-                --repo "$GITHUB_REPOSITORY"
-            fi
-            gh release upload examples-latest dist/*.zip \
-              --clobber --repo "$GITHUB_REPOSITORY"
+            tag="examples-latest"
+          fi
+
+          {
+            echo "Installable example plugins for the Sahaj CRM."
+            echo
+            echo "Paste one URL per line into the plugin installer in CRM settings:"
+            echo
+            for asset in dist/*.zip; do
+              echo "https://github.com/$GITHUB_REPOSITORY/releases/download/$tag/$(basename "$asset")"
+            done
+          } > notes.md
+
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$tag" dist/*.zip --clobber --repo "$GITHUB_REPOSITORY"
+            gh release edit "$tag" --notes-file notes.md --repo "$GITHUB_REPOSITORY"
+          elif [ "$tag" = "examples-latest" ]; then
+            gh release create "$tag" dist/*.zip \
+              --prerelease \
+              --title "Example builds" \
+              --notes-file notes.md \
+              --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$tag" dist/*.zip \
+              --title "Example builds $tag" \
+              --notes-file notes.md \
+              --repo "$GITHUB_REPOSITORY"
           fi
