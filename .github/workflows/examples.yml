@@ -122,8 +122,14 @@ jobs:
             echo
             echo "Paste one URL per line into the plugin installer in CRM settings:"
             echo
-            for asset in dist/*.zip; do
-              echo "https://github.com/$GITHUB_REPOSITORY/releases/download/$tag/$(basename "$asset")"
+            # Asset names are <example>_<platform>.zip, so the platform is the
+            # trailing underscore-separated parts. Group by platform so each
+            # list can be copied as one block.
+            for platform in $(ls dist/*.zip | sed -E 's/.*_([^_]+_[^_]+)\.zip$/\1/' | sort -u); do
+              for asset in dist/*_"$platform".zip; do
+                echo "https://github.com/$GITHUB_REPOSITORY/releases/download/$tag/$(basename "$asset")"
+              done
+              echo
             done
           } > notes.md
 
